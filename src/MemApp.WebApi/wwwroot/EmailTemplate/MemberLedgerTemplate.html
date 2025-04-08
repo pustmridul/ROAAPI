@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        /* Add your custom CSS styles here */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div >
+       
+        <h3 style="text-align: center;">Member Ledger Report For ######MemberName######</h3>
+        <hr>
+    </div>
+
+    <div style="display: flex;">
+        <div style="width:  50%;">
+            <div>Member Name: ######MemberName######</div>
+            <div>Phone: ######Phone######</div>
+        </div>
+        <div>
+            <div>Card No: ######CardNo######</div>
+            <div>Membership No: ######MembershipNo######</div>
+        </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th style="width: 37%;">Description</th>
+                    <th>Pay Type</th>
+                    <th>Bank Credit Card</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                ######LedgerReport######
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+USER=CCCL&Password=Cccl@92#95&sms[0][0]=8801774686556&sms[0][1]=Hello%2c+Mridul&sms[0][2]=1&Sid=cccl
