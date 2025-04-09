@@ -11,6 +11,8 @@ using MemApp.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 using MemApp.Application.Com.Models;
+using MemApp.Application.Services;
+using Dapper;
 
 
 namespace ResApp.Application.Com.Commands.MemberRegistration
@@ -71,14 +73,18 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         private readonly IMediator _mediator;       
         private readonly IPermissionHandler _permissionHandler;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IDapperContext _dapperContext;
 
         //  private readonly IWebHostEnvironment _hostingEnv;
-        public UpdateMemberRegCommandHandler(IMemDbContext context, IMediator mediator, IPermissionHandler permissionHandler, ICurrentUserService currentUserService)
+        public UpdateMemberRegCommandHandler(IMemDbContext context, IMediator mediator, 
+                                             IPermissionHandler permissionHandler, ICurrentUserService currentUserService, 
+                                             IDapperContext dapperContext)
         {
             _context = context;
             _mediator = mediator;
             _currentUserService = currentUserService;
             _permissionHandler = permissionHandler;
+            _dapperContext = dapperContext;
         }
 
         public async Task<Result<MemberRegistrationInfoDto>> Handle(UpdateMemberRegCommand request, CancellationToken cancellationToken)
@@ -319,8 +325,19 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                     //var entity = new MemberRegistrationInfo
                     //{
                     //  Id = nextId,
+
+                     var lastmembershipNo = await _context.MemberRegistrationInfos.Select(s => s.MemberShipNo).MaxAsync(cancellationToken);
+                    if (lastmembershipNo != "")
+                    {
+                        lastmembershipNo = (Convert.ToInt32(lastmembershipNo) + 1).ToString("00000000");
+                    }
+                    else
+                    {
+                        lastmembershipNo = "00000001";
+                    }
                     memberReg.ApplicationNo = request.ApplicationNo;
-                    memberReg.MemberShipNo = GenerateMembershipNo();
+                //  memberReg.MemberShipNo = GenerateMembershipNo();
+                    memberReg.MemberShipNo = await GenerateMembershipNoAsync();// lastmembershipNo;
                     memberReg.IsApproved = false;
                     memberReg.PermenantAddress = request.PermenantAddress;
                     memberReg.CreatedOn = DateTime.UtcNow;
@@ -382,7 +399,23 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
           //  }
             return result;
         }
+        public async Task<string> GenerateMembershipNoAsync()
+        {
+            using (var connection = _dapperContext.CreateConnection())
+            {
+                string query = @"SELECT NEXT VALUE FOR dbo.MembershipNoSequence";
+                var data = await connection.QueryAsync<long>(query);
+                return data.First().ToString("D8"); // format like 00000001
+            }
+            //var nextValue = await _context.Database
+            //                 .ExecuteSqlRawAsync("SELECT NEXT VALUE FOR dbo.MembershipNoSequence");
+            //var result = await _context.da
+            //            .sql<int>("SELECT NEXT VALUE FOR dbo.MembershipNoSequence AS Value")
+            //            .AsNoTracking()
+            //            .FirstAsync();
 
+            //return result.Value.ToString("D8"); // format like 00000001
+        }
         public string GenerateMembershipNo()
         {
             // string initials = new string(fullName.Split(' ').Select(w => w[0]).ToArray()).ToUpper();

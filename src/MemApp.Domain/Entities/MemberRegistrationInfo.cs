@@ -71,8 +71,11 @@ namespace Res.Domain.Entities
 
         public DateTime? PaidTill { get; set; }
         public DateTime? SubscriptionStarts { get; set; }
-
+        public int? RestaurentQuantity { get; set; }
+        public string? SmsPhone { get; set; }
+        public ICollection<MultipleOwner>? MultipleOwners { get; set; }
         public ICollection<RoSubscriptionDueTemp>? SubscriptionDuePayments { get; set; }
+       
         public ICollection<RoaMembershipFeePayment>? MembershipFeePayments { get; set; }
 
         public ICollection<ROASubscriptionPayment>? SubscriptionPayments { get; set; }

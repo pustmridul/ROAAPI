@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using Res.Domain.Entities;
+using Res.Domain.Entities.RoaCommittee;
 using Res.Domain.Entities.ROAPayment;
 using Res.Domain.Entities.ROASubscription;
 using System.Data;
@@ -196,6 +197,13 @@ namespace MemApp.Application.Interfaces.Contexts
         DbSet<ROASubscriptionPaymentDetail> ROASubscriptionPaymentDetail { get; }
         DbSet<RoMemberLedger> RoMemberLedgers { get; }
 
+        #endregion
+
+        #region ROA Committee
+        DbSet<RoCommittee> RoCommittees { get; }
+        DbSet<RoCommitteeDetail> RoCommitteeDetails { get; }
+       // DbSet<BoardMeetingMinuet> BoardMeetingMinuets { get; }
+        DbSet<RoCommitteeCategory> RoCommitteeCategories { get; }
         #endregion
 
         IDbContextTransaction BeginTransaction();

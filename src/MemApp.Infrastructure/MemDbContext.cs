@@ -20,6 +20,7 @@ using MemApp.Domain.Entities.Restaurant;
 using Res.Domain.Entities;
 using Res.Domain.Entities.ROAPayment;
 using Res.Domain.Entities.ROASubscription;
+using Res.Domain.Entities.RoaCommittee;
 
 namespace MemApp.Infrastructure
 {
@@ -173,6 +174,13 @@ namespace MemApp.Infrastructure
         public DbSet<ROASubscriptionPaymentDetail> ROASubscriptionPaymentDetail => Set<ROASubscriptionPaymentDetail>();
         public DbSet<RoMemberLedger> RoMemberLedgers => Set<RoMemberLedger>();
 
+        #endregion
+
+        #region ROA Committee
+        public DbSet<RoCommittee> RoCommittees => Set<RoCommittee>();
+        public DbSet<RoCommitteeDetail> RoCommitteeDetails => Set<RoCommitteeDetail>();
+        
+        public DbSet<RoCommitteeCategory> RoCommitteeCategories => Set<RoCommitteeCategory>();
         #endregion
         public IDbContextTransaction BeginTransaction()
         {
