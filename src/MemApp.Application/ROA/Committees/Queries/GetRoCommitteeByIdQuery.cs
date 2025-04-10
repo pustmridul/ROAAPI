@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MemApp.Application.Extensions;
 using ResApp.Application.ROA.Committees.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace ResApp.Application.ROA.Committees.Queries
 {
@@ -23,11 +24,14 @@ namespace ResApp.Application.ROA.Committees.Queries
     public class GetRoCommitteeByIdQueryHandler : IRequestHandler<GetRoCommitteeByIdQuery, Result<RoCommitteeReq>>
     {
         private readonly IMemDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         //private readonly IUserLogService _userLogService;
         //private readonly ICurrentUserService _currentUserService;
-        public GetRoCommitteeByIdQueryHandler(IMemDbContext context, ICurrentUserService currentUserService, IUserLogService userLogService)
+        public GetRoCommitteeByIdQueryHandler(IMemDbContext context, 
+                                              ICurrentUserService currentUserService, IUserLogService userLogService,  IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             //_currentUserService = currentUserService;
             //_userLogService = userLogService;
         }
@@ -35,6 +39,7 @@ namespace ResApp.Application.ROA.Committees.Queries
         public async Task<Result<RoCommitteeReq>> Handle(GetRoCommitteeByIdQuery request, CancellationToken cancellationToken)
         {
             // var result = new CommitteeVm();
+            string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
             var result = new Result<RoCommitteeReq>()
             {
                 Data= new RoCommitteeReq
@@ -42,7 +47,7 @@ namespace ResApp.Application.ROA.Committees.Queries
                     CommitteeDetails= new List<RoCommitteeDetailReq>()
                 }
             };
-            var data = await _context.Committees
+            var data = await _context.RoCommittees
                 .Include(i => i.CommitteeDetails)
                 .SingleOrDefaultAsync(q => q.Id == request.Id && q.IsActive, cancellationToken);
 
@@ -72,10 +77,11 @@ namespace ResApp.Application.ROA.Committees.Queries
                         Email = s.Email,
                         CommitteeId = s.CommitteeId,
                         Phone = s.Phone,
-                        ImgFileUrl = s.ImgFileUrl,
+                       // ImgFileUrl = s.ImgFileUrl,
+                        ImgFileUrl = s.ImgFileUrl == null ? baseUrl + "/uploadsMembers/test.png" : baseUrl + "/uploadsMembers/" + s.ImgFileUrl,
                         Designation = s.Designation,
-                        MembershipNo = s.MemberShipNo,
-                        IsMasterMember = s.IsMasterMember,
+                        MembershipNo = s.MembershipNo,
+                      //  IsMasterMember = s.IsMasterMember,
                         Id = s.Id
 
                     }).ToList(),

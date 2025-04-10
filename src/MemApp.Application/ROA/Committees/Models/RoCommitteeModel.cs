@@ -17,10 +17,13 @@ namespace ResApp.Application.ROA.Committees.Models
         public string CommitteeDate { get; set; } = string.Empty;
         public string CommitteeType { get; set; } = string.Empty;
         public int? CommitteeCategoryId { get; set; }
+        public int? DivisionId { get; set; }
+        public int? DistrictId { get; set; }
+        public int? ThanaId { get; set; }
         public string? CommitteeCategoryName { get; set; }
         public bool IsActive { get; set; }
         public int Id { get; set; }
-        public string CommitteeYear { get; set; } = string.Empty;
+        public int CommitteeYear { get; set; }
         public List<RoCommitteeDetailReq> CommitteeDetails { get; set; } = new List<RoCommitteeDetailReq>();
     }
     public class RoCommitteeDetailReq

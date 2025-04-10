@@ -17,9 +17,7 @@ namespace MemApp.Application.Mem.Committees.Models
         public string CommitteeDate { get; set; } = string.Empty;
         public string CommitteeType { get; set; } = string.Empty;
         public int? CommitteeCategoryId { get; set; }
-        public int? DivisionId { get; set; }
-        public int? DistrictId { get; set; }
-        public int? ThanaId { get; set; }
+        
         public string? CommitteeCategoryName { get; set; }
         public bool IsActive { get; set; }
         public int Id { get; set; }
@@ -82,5 +80,11 @@ namespace MemApp.Application.Mem.Committees.Models
         public string IsMasterMember { get; set; } = string.Empty;
         public string ImgFileUrl { get; set; } = string.Empty;
         public bool HasImage { get; set; }
+    }
+
+    public class CommitteeCatReq
+    {
+        public string Title { get; set; } = string.Empty;
+        public int Id { get; set; }
     }
 }

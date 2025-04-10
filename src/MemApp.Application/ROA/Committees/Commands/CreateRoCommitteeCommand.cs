@@ -20,7 +20,7 @@ namespace ResApp.Application.ROA.Committees.Commands
     
     public class CreateRoCommitteeCommand : IRequest<Result<RoCommitteeReq>>
     {
-        public CommitteeReq Model { get; set; } = new CommitteeReq();
+        public RoCommitteeReq Model { get; set; } = new RoCommitteeReq();
     }
 
     public class CreateRoCommitteeCommandHandler : IRequestHandler<CreateRoCommitteeCommand, Result<RoCommitteeReq>>
@@ -90,10 +90,10 @@ namespace ResApp.Application.ROA.Committees.Commands
                 obj.CommitteeDate = DateTime.Parse(request.Model.CommitteeDate);
                 obj.CommitteeYear = request.Model.CommitteeYear;
                // obj.CommitteeCategoryId = request.Model.CommitteeCategoryId ?? 0;
-                obj.CommitteeCategoryId = request.Model.CommitteeCategoryId ;
-                obj.DivisionId = request.Model.DivisionId ;
-                obj.DistrictId = request.Model.DistrictId ;
-                obj.ThanaId = request.Model.ThanaId ;
+                obj.CommitteeCategoryId = request.Model.CommitteeCategoryId == 0 ? null: request.Model.CommitteeCategoryId ;
+                obj.DivisionId = request.Model.DivisionId == 0 ? null : request.Model.DivisionId;
+                obj.DistrictId = request.Model.DistrictId == 0 ? null : request.Model.DistrictId ;
+                obj.ThanaId = request.Model.ThanaId == 0 ? null : request.Model.ThanaId ;
 
                 await _context.SaveChangesAsync(cancellation);
 
@@ -109,11 +109,16 @@ namespace ResApp.Application.ROA.Committees.Commands
                             CommitteeId = obj.Id,
                             Email = ald.Email,
                             Phone = ald.Phone,
-                            ImgFileUrl = ald.ImgFileUrl,
+                          //  ImgFileUrl = ald.ImgFileUrl,
                             Designation = ald.Designation,
                            // IsMasterMember = ald.IsMasterMember,
-                            MembershipNo = ald.MemberShipNo,
+                            MembershipNo = ald.MembershipNo,
                         };
+                        string filePath = ald.ImgFileUrl!;
+                        //string[] parts = filePath.Split('/');
+                        //string slicedString = parts.Last();  // Get the last part
+                        string slicedString = Path.GetFileName(filePath);  // Optimized extraction of file name
+                        exist.ImgFileUrl = slicedString;
                         details.Add(exist);
                     }
 
