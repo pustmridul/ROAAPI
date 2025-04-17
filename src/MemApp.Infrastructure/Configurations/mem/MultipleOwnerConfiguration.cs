@@ -13,6 +13,6 @@ public class MultipleOwnerConfiguration : IEntityTypeConfiguration<MultipleOwner
         builder.ToTable("roa_MultipleOwner");
         builder.HasKey(e => new { e.Id });
         builder.Property(e=>e.Id).ValueGeneratedOnAdd();
-        builder.Property(a=>a.Email).IsRequired().HasMaxLength(100);
+      //  builder.Property(a=>a.Email).IsRequired().HasMaxLength(100);
     }
 }

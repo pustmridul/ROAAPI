@@ -16,6 +16,7 @@ public class District :BaseEntity
     public bool? IsActive {  get; set; }
 
     public ICollection<Thana>? Thanas { get; set; }
+    public ICollection<ZoneInfo>? Zones { get; set; }
 
 
     public virtual ICollection<MemberRegistrationInfo>? MemberRegistrationInfos { get; set; }

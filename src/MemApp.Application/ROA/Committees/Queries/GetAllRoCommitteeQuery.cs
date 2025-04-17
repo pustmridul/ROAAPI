@@ -19,13 +19,7 @@ namespace ResApp.Application.ROA.Committees.Queries
    
     public class GetAllRoCommitteeQuery : IRequest<ListResult<RoCommitteeReq>>
     {
-        public int Id { get; set; }
-        public string? Type { get; set; }
-        public int? Year { get; set; }
-        public int? DivisionId { get; set; }
-        public int? DistrictId { get; set; }
-        public int? ThanaId { get; set; }
-        public int? CategoryId { get; set; }
+        public CommitteeSearchParam Model { get; set; } = new CommitteeSearchParam();
 
     }
 
@@ -53,21 +47,28 @@ namespace ResApp.Application.ROA.Committees.Queries
             {
                 var data = new List<RoCommittee>();
 
-                if (request.Type == "Executive")
+                if (request.Model.Type == "Executive")
                 {
                     var query = _context.RoCommittees
-                            .Where(x => x.IsActive && x.CommitteeType==request.Type) // Base filters
+                            .Where(x => x.IsActive && x.CommitteeType==request.Model.Type) // Base filters
                             .AsQueryable(); // Start with IQueryable
 
-                    if(request.Year>0)
+                    if(request.Model.Year>0)
                     {
-                        query = query.Where(x => x.CommitteeYear == request.Year);
+                        query = query.Where(x => x.CommitteeYear == request.Model.Year);
                     }
                     query = query.OrderByDescending(o => o.CommitteeYear);
 
                     //data= await query.
                     //    Include(x=>x.CommitteeDetails).
                     //    ToListAsync(cancellationToken);
+
+                    // Apply pagination
+                    //var data = await query.ToPaginatedListAsync(
+                    //    request.Model.PageNo.GetValueOrDefault(),
+                    //    request.Model.PageSize.GetValueOrDefault(),
+                    //    cancellationToken
+                    //);
 
                     result.Data = await query.Select(s => new RoCommitteeReq
                     {
@@ -111,37 +112,47 @@ namespace ResApp.Application.ROA.Committees.Queries
                 else
                 {
                     var query = _context.RoCommittees
-                            .Where(x => x.IsActive && x.CommitteeType == request.Type) // Base filters
+                            .Where(x => x.IsActive && x.CommitteeType == request.Model.Type) // Base filters
                             .AsQueryable(); // Start with IQueryable
 
-                    if (request.Year > 0)
+                    if (request.Model.Year > 0)
                     {
-                        query = query.Where(x => x.CommitteeYear == request.Year);
+                        query = query.Where(x => x.CommitteeYear == request.Model.Year);
                     }
 
-                    if (request.DivisionId != null && request.DistrictId == null && request.ThanaId == null)
+                    if (request.Model.DivisionId != null && request.Model.DistrictId == null && request.Model.ThanaId == null)
                     {
                         // Only Division level
-                        query = query.Where(x => x.DivisionId == request.DivisionId && x.DistrictId == null && x.ThanaId == null);
+                        query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == null && x.ThanaId == null);
                     }
-                    else if (request.DivisionId != null && request.DistrictId != null && request.ThanaId == null)
+                    else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ThanaId == null)
                     {
                         // Only District level
-                        query = query.Where(x => x.DivisionId==request.DivisionId && x.DistrictId == request.DistrictId && x.ThanaId == null);
+                        query = query.Where(x => x.DivisionId==request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ThanaId == null);
                     }
-                    else if (request.DivisionId != null && request.DistrictId != null && request.ThanaId != null)
+                    else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ThanaId != null)
                     {
                         // Thana level
-                        query = query.Where(x => x.DivisionId == request.DivisionId && x.DistrictId == request.DistrictId && x.ThanaId == request.ThanaId);
+                        query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ThanaId == request.Model.ThanaId);
                     }
 
-                    query = query.OrderByDescending(o => o.CommitteeYear);
+                    query = query.
+                        Include(x=>x.CommitteeDetails).
+                        OrderByDescending(o => o.CommitteeYear);
 
-                    data = await query.
-                         Include(x => x.CommitteeDetails).
-                         ToListAsync(cancellationToken);
+                    //data = await query.
+                    //     Include(x => x.CommitteeDetails).
+                    //     ToListAsync(cancellationToken);
 
-                    result.Data = await query.Select(s => new RoCommitteeReq
+                    // Apply pagination
+                    var paginatedResult = await query.ToPaginatedListAsync(
+                        request.Model.PageNo.GetValueOrDefault(),
+                        request.Model.PageSize.GetValueOrDefault(),
+                        cancellationToken
+                    );
+                    result.Count = paginatedResult.TotalCount;
+                    // result.Data = await query.Select(s => new RoCommitteeReq
+                    result.Data = paginatedResult.Data.Select(s => new RoCommitteeReq
                     {
                         Id = s.Id,
                         Title = s.Title,
@@ -149,7 +160,11 @@ namespace ResApp.Application.ROA.Committees.Queries
                         IsActive = s.IsActive,
                         CommitteeYear = s.CommitteeYear,
                         CommitteeCategoryId = s.CommitteeCategoryId,
-                        CommitteeCategoryName = s.CommitteeCategory!.Title,
+                        // CommitteeCategoryName = s.CommitteeCategory!.Title,
+                        CommitteeCategoryName = s.CommitteeCategoryId != null ? _context.RoCommitteeCategories.FirstOrDefault(x => x.Id == s.CommitteeCategoryId)?.Title : "",
+                        DivisionName = s.DivisionId != null ? _context.Divisions.FirstOrDefault(x => x.Id == s.DivisionId)?.EnglishName : "",
+                        DistrictName = s.DistrictId != null ? _context.Districts.FirstOrDefault(x => x.Id == s.DistrictId)?.EnglishName : "",
+                        ThanaName = s.ThanaId != null ? _context.Thanas.FirstOrDefault(x => x.Id == s.ThanaId)?.EnglishName : "",
                         CommitteeDetails = s.CommitteeDetails.Select(s => new RoCommitteeDetailReq
                         {
                             MemberName = s.MemberName,
@@ -161,7 +176,7 @@ namespace ResApp.Application.ROA.Committees.Queries
                             MembershipNo = s.MembershipNo,
 
                         }).ToList(),
-                    }).ToListAsync(cancellationToken);
+                    }).ToList();
 
                     // query = query.OrderByDescending(o => o.CommitteeYear);
                     // data = await _context.RoCommittees
@@ -242,7 +257,8 @@ namespace ResApp.Application.ROA.Committees.Queries
             catch (Exception ex)
             {
                 result.HasError = true;
-                result.Messages?.Add(ex.ToString());
+             //   result.Messages?.Add(ex.ToString());
+                result.Messages?.Add("Something went wrong");
             }
 
             return result;

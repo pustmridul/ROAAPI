@@ -22,6 +22,7 @@ namespace ResApp.Application.Com.Commands.UpdateThana
         public DateTime? CreatedOn { get; set; }
 
         public int DistrictId { get; set; }
+        public int? ZoneId { get; set; }
 
     }
 
@@ -92,6 +93,7 @@ namespace ResApp.Application.Com.Commands.UpdateThana
                         checkThanaExist.EnglishName = request.EnglishName;
                         checkThanaExist.BanglaName = request.BanglaName;
                         checkThanaExist.DistrictId = request.DistrictId;
+                        checkThanaExist.ZoneId = request.ZoneId;
 
                         _context.Thanas.Update(checkThanaExist);
 
@@ -143,6 +145,7 @@ namespace ResApp.Application.Com.Commands.UpdateThana
                         EnglishName = request.EnglishName,
                         BanglaName = request.BanglaName,
                         DistrictId = request.DistrictId,
+                        ZoneId=request.ZoneId,
                         IsActive=true,
                       
                     };

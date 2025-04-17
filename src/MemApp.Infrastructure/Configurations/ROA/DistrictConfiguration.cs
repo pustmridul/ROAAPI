@@ -4,7 +4,7 @@ using MemApp.Domain.Entities;
 using MemApp.Domain.Entities.mem;
 using Res.Domain.Entities;
 
-namespace MemApp.Infrastructure.Configurations.mem;
+namespace Res.Infrastructure.Configurations.ROA;
 
 public class DistrictConfiguration : IEntityTypeConfiguration<District>
 {
@@ -12,8 +12,8 @@ public class DistrictConfiguration : IEntityTypeConfiguration<District>
     {
         builder.ToTable("District");
         builder.HasKey(e => new { e.Id });
-        builder.Property(e=>e.Id).ValueGeneratedOnAdd();
-        builder.Property(a=>a.EnglishName).IsRequired().HasMaxLength(100);
+        builder.Property(e => e.Id).ValueGeneratedOnAdd();
+        builder.Property(a => a.EnglishName).IsRequired().HasMaxLength(100);
 
         // Configure foreign key relationship with District
         builder.HasOne(t => t.Division)

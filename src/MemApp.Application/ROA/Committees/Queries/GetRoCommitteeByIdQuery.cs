@@ -70,7 +70,13 @@ namespace ResApp.Application.ROA.Committees.Queries
                     CommitteeYear = data.CommitteeYear,
                     CommitteeType = data.CommitteeType,
                     CommitteeCategoryId = data.CommitteeCategoryId,
+                    DivisionId=data.DivisionId,
+                    DistrictId=data.DistrictId,
+                    ThanaId=data.ThanaId,
                     CommitteeCategoryName = data.CommitteeCategoryId > 0 ? committeeCategory!.SingleOrDefault(s => s.Id == data.CommitteeCategoryId)!.Title : "",
+                    DivisionName = data.DivisionId != null ? _context.Divisions.SingleOrDefault(x=>x.Id==data.DivisionId)!.EnglishName : "",
+                    DistrictName = data.DistrictId != null ? _context.Districts.SingleOrDefault(x => x.Id == data.DistrictId)!.EnglishName : "",
+                    ThanaName = data.ThanaId != null ? _context.Thanas.SingleOrDefault(x => x.Id == data.ThanaId)!.EnglishName : "",
                     CommitteeDetails = data.CommitteeDetails.Select(s => new RoCommitteeDetailReq()
                     {
                         MemberName = s.MemberName,

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces.Contexts;
+using MemApp.Application.Mem.Committees.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ResApp.Application.Models.DTOs;
@@ -32,6 +33,10 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
             var result = new Result<MemberRegistrationInfoDto>();
             string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
             var data = await _context.MemberRegistrationInfos.
+                Include(x => x.Division).
+                Include(x => x.District).
+                Include(x => x.Thana).
+                Include(x=> x.MultipleOwners).
                 Where(x=> x.Id== request.MemberId).FirstOrDefaultAsync(cancellationToken);
 
             if (data == null)
@@ -74,14 +79,25 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     TradeLicenseImgPath = data.TradeLicenseImgPath == null ? baseUrl + "/uploadsMemberTrade/testTrade.jpg" : baseUrl + "/uploadsMemberTrade/" + data.TradeLicenseImgPath,
 
                     DivisionId = data.DivisionId.GetValueOrDefault(),
+                    ZoneId = data.ZoneId.GetValueOrDefault(),
+                    MunicipalityId = data.MunicipalityId.GetValueOrDefault(),
+                    UnionInfoId = data.UnionInfoId.GetValueOrDefault(),
+                    WardId = data.WardId.GetValueOrDefault(),
 
-                    DivisionName = _context.Divisions.Where(x => x.Id == data.DivisionId).FirstOrDefault()!.EnglishName,
+                    DivisionName = data.Division?.EnglishName, // _context.Divisions.Where(x => x.Id == data.DivisionId).FirstOrDefault()!.EnglishName,
                     DistrictName = _context.Districts.Where(x => x.Id == data.DistrictId).FirstOrDefault()!.EnglishName,
-                    ThanaName = _context.Thanas.Where(x => x.Id == data.ThanaId).FirstOrDefault()!.EnglishName,
+                    ThanaName = data.Thana?.EnglishName, //_context.Thanas.Where(x => x.Id == data.ThanaId).FirstOrDefault()!.EnglishName,
                     SubscriptionFee=data.SubscriptionFee.GetValueOrDefault(),
                     MembershipFee =data.MembershipFee.GetValueOrDefault(),
                     SubscriptionStarts=data.SubscriptionStarts,
-                    PaidTill=data.PaidTill
+                    PaidTill=data.PaidTill,
+                    ContactDetailReq = data.MultipleOwners?.Select(s => new ContactDetailReq
+                    {
+                        Id = s.Id,
+                        Email = s.Email,
+                        Phone = s.Phone,
+                        Name = s.Name,
+                    }).ToList(),
                 };
                 
             }

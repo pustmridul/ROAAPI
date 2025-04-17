@@ -6,6 +6,7 @@ using Res.Domain.Entities;
 using ResApp.Application.Com.Commands.MemberRegistration;
 using ResApp.Application.Com.Commands.UpdateThana;
 using ResApp.Application.Com.Queries.GetMemberRegistrationInfo;
+using ResApp.Application.Models.DTOs;
 using ResApp.Application.ROA.CommitteeCategory.Command;
 using ResApp.Application.ROA.CommitteeCategory.Queries;
 using ResApp.Application.ROA.Committees.Commands;
@@ -27,12 +28,11 @@ namespace Res.WebApi.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAll(string? committeeType, int? committeeYear, int? categoryId, int? districtId, int? thanaId)
+        public async Task<IActionResult> GetAll([FromQuery] CommitteeSearchParam paginationParams)
         {
             var result = await Mediator.Send(new GetAllRoCommitteeQuery() 
             { 
-                Type = committeeType, Year = committeeYear,
-                CategoryId=categoryId, DistrictId=districtId,ThanaId=thanaId
+               Model=paginationParams
             });
 
             return Ok(result);

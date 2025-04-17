@@ -34,8 +34,8 @@ namespace ResApp.Application.Com.Queries.GetDivisionQuery
             //var data = await _context.Thanas.
             //    Where(x=> x.DistrictId== request.DistrictId).ToListAsync(cancellationToken);
 
-            var data = await _context.Thanas.Where(x => (request.DistrictId == 0 || x.DistrictId == request.DistrictId) &&
-          (!string.IsNullOrEmpty(request.SearchText) ? x.EnglishName!.ToLower().Contains(request.SearchText.ToLower()) : true)).OrderBy(o => o.EnglishName)
+            var data = await _context.Thanas.Include(x=>x.District).Include(x=>x.Zone).Where(x => (request.DistrictId == 0 || x.DistrictId == request.DistrictId) &&
+          (!string.IsNullOrEmpty(request.SearchText) ? x.EnglishName!.ToLower().Contains(request.SearchText.ToLower()) : true)).OrderBy(o => o.DistrictId)
               .ToPaginatedListAsync(request.PageNo, request.PageSize, cancellationToken);
 
             if (data.TotalCount == 0)
@@ -53,6 +53,10 @@ namespace ResApp.Application.Com.Queries.GetDivisionQuery
                     EnglishName = s.EnglishName,
                     BanglaName = s.BanglaName,
                     DistrictId=s.DistrictId.GetValueOrDefault(),
+                    ZoneId=s.ZoneId.GetValueOrDefault(),
+                    DistrictName=s.District?.EnglishName,
+                    DistrictBanglaName=s.District?.BanglaName,
+                    ZoneName=s.Zone?.EnglishName,
                 }).ToList();
             }
 

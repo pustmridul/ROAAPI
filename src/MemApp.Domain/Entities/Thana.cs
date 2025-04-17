@@ -15,6 +15,12 @@ namespace Res.Domain.Entities
         public int? DistrictId { get; set; }
         public District? District { get; set; }
 
+        public int? ZoneId { get; set; }
+        public ZoneInfo? Zone { get; set; }
+        public ICollection<Municipality>? Municipalities { get; set; }
+        public ICollection<UnionInfo>? UnionInfos { get; set; }
+        public ICollection<Ward>? Wards { get; set; }
+
         public virtual ICollection<MemberRegistrationInfo>? MemberRegistrationInfos { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MemApp.Application.Extensions;
+using ResApp.Application.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ namespace ResApp.Application.ROA.Committees.Models
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
         public string? CommitteeCategoryName { get; set; }
+        public string? DivisionName { get; set; }
+        public string? DistrictName { get; set; }
+        public string? ThanaName { get; set; }
         public bool IsActive { get; set; }
         public int Id { get; set; }
         public int CommitteeYear { get; set; }
@@ -78,9 +82,23 @@ namespace ResApp.Application.ROA.Committees.Models
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Designation { get; set; } = string.Empty;
-        public string MemberShipNo { get; set; } = string.Empty;
+        public string MembershipNo { get; set; } = string.Empty;
         public string IsMasterMember { get; set; } = string.Empty;
         public string ImgFileUrl { get; set; } = string.Empty;
         public bool HasImage { get; set; }
+    }
+
+    public class CommitteeSearchParam : PaginationParams
+    {
+        public int? Id { get; set; }
+        public string? Type { get; set; }
+        public int? Year { get; set; }
+        public int? CategoryId { get; set; }
+
+        public int? DivisionId { get; set; }
+        public int? DistrictId { get; set; }
+        public int? ThanaId { get; set; }
+
+
     }
 }

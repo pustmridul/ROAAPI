@@ -59,6 +59,11 @@ namespace ResApp.Application.Models.DTOs
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
 
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
+
         public string? DivisionName {  get; set; }
         public string? DistrictName {  get; set; }
         public string? ThanaName {  get; set; }
@@ -66,6 +71,8 @@ namespace ResApp.Application.Models.DTOs
         public DateTime? PaidTill {  get; set; }
 
         public bool MemberFeePaid { get; set; }
+
+        public List<ContactDetailReq>? ContactDetailReq { get; set; }
     }
 
     public class MemberRegistrationInfoReq : MemberRegistrationInfoDto
@@ -106,6 +113,18 @@ namespace ResApp.Application.Models.DTOs
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
 
-        
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
+
+    }
+
+    public class ContactDetailReq
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
     }
 }

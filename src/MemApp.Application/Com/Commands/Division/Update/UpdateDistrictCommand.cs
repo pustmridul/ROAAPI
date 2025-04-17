@@ -23,6 +23,7 @@ namespace ResApp.Application.Com.Commands.Division.Update
         public DateTime? CreatedOn { get; set; }
 
         public int DistrictId { get; set; }
+        public int DivisionId { get; set; }
     }
 
     public class UpdateDistrictCommandHandler : IRequestHandler<UpdateDistrictCommand, Result<DistrictDto>>
@@ -90,6 +91,8 @@ namespace ResApp.Application.Com.Commands.Division.Update
 
                         checkDistrictExist.EnglishName = request.EnglishName;
                         checkDistrictExist.BanglaName = request.BanglaName;
+                        if(request.DivisionId>0)
+                        checkDistrictExist.DivisionId = request.DivisionId;
 
                         _context.Districts.Update(checkDistrictExist);
 
@@ -140,6 +143,7 @@ namespace ResApp.Application.Com.Commands.Division.Update
                     {
                         EnglishName = request.EnglishName,
                         BanglaName = request.BanglaName,
+                        DivisionId = request.DivisionId,
                         IsActive = true
                     };
 

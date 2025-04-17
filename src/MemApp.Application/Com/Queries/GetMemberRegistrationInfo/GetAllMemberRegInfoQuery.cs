@@ -140,6 +140,25 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     query = query.Where(x => x.ThanaId == request.Model.ThanaId);
                 }
 
+                if (request.Model.ZoneId.HasValue)
+                {
+                    query = query.Where(x => x.ZoneId == request.Model.ZoneId);
+                }
+
+                if (request.Model.MunicipalityId.HasValue)
+                {
+                    query = query.Where(x => x.MunicipalityId == request.Model.MunicipalityId);
+                }
+
+                if (request.Model.UnionInfoId.HasValue)
+                {
+                    query = query.Where(x => x.UnionInfoId == request.Model.UnionInfoId);
+                }
+
+                if (request.Model.WardId.HasValue)
+                {
+                    query = query.Where(x => x.WardId == request.Model.WardId);
+                }
                 //if (request.Model.IsApproved !=null)
                 //{
                 //    query = query.Where(x => x.IsApproved == request.Model.IsApproved);

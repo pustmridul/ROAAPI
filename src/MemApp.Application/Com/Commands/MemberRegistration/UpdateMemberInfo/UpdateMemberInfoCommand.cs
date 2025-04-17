@@ -14,6 +14,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using MemApp.Application.Mem.TopUps.Command;
 using ResApp.Application.Com.Commands.Subscription;
 using AutoMapper.Execution;
+using MemApp.Application.Mem.Members.Models;
 
 
 namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
@@ -59,6 +60,11 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
         public int? DivisionId { get; set; }
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
+
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
         public string? WebRootPath { get; set; }
 
         public IFormFile? SignatureImgFile { get; init; }
@@ -68,6 +74,8 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
         public IFormFile? TinImgFile { get; set; }
         public decimal SubscriptionFee { get; set; }
         public DateTime? SubscriptionStarts { get; set; }
+
+        public List<ContactDetailReq>? ContactDetailReq { get; set; } = new List<ContactDetailReq>();
     }
 
     public class UpdateMemberInfoCommandHandler : IRequestHandler<UpdateMemberInfoCommand, Result<MemberRegistrationInfoDto>>
@@ -80,8 +88,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
         public UpdateMemberInfoCommandHandler(IMemDbContext context, IMediator mediator, IPermissionHandler permissionHandler)
         {
             _context = context;
-            _mediator = mediator;
-            
+            _mediator = mediator;            
             _permissionHandler = permissionHandler;
         }
 
@@ -416,6 +423,12 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                     checkUserExist.DistrictId = request.DistrictId;
                     checkUserExist.DivisionId = request.DivisionId;
                     checkUserExist.ThanaId = request.ThanaId;
+
+                    checkUserExist.ZoneId = request.ZoneId;
+                    checkUserExist.MunicipalityId = request.MunicipalityId;
+                    checkUserExist.UnionInfoId = request.UnionInfoId;
+                    checkUserExist.WardId = request.WardId;
+
                     checkUserExist.InstituteNameBengali = request.InstituteNameBengali;
                     checkUserExist.InstituteNameEnglish = request.InstituteNameEnglish;
                     checkUserExist.MemberTINNo = request.MemberTINNo;
@@ -449,6 +462,51 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                     
 
                     _context.MemberRegistrationInfos.Update(checkUserExist);
+
+                    if (request.ContactDetailReq?.Count > 0)
+                    {
+                        var existingOwners = await _context.MultipleOwners
+                                            .Where(x => x.MemberId == checkUserExist.Id)
+                                            .ToListAsync(cancellationToken);
+
+                        var incomingIds = request.ContactDetailReq
+                                            .Where(x => x.Id > 0)
+                                            .Select(x => x.Id)
+                                            .ToList();
+
+                        foreach (var item in request.ContactDetailReq)
+                        {
+                            var exist= await _context.MultipleOwners.FirstOrDefaultAsync(x=>x.Id == item.Id && x.MemberId==checkUserExist.Id,cancellationToken);
+                            if(exist != null)
+                            {
+                                exist.Name = item.Name;
+                                exist.Email = item.Email;
+                                exist.Phone = item.Phone;
+
+                                _context.MultipleOwners.Update(exist);
+                            }
+                            else
+                            {
+                                var contact = new MultipleOwner
+                                {
+                                    Name = item.Name,
+                                    Phone = item.Phone,
+                                    Email = item.Phone,
+                                    MemberId = checkUserExist.Id,
+                                };
+                                _context.MultipleOwners.Add(contact);
+                            }
+                            
+                        }
+
+                        // 3. Remove items not in the incoming request
+                        var toRemove = existingOwners
+                            .Where(x => !incomingIds.Contains(x.Id))
+                            .ToList();
+
+                        _context.MultipleOwners.RemoveRange(toRemove);
+                    }
+
 
                     if (await _context.SaveChangesAsync(cancellationToken) > 0)
                     {

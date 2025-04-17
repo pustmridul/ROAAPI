@@ -19,6 +19,7 @@ namespace ResApp.Application.Com.Queries.GetDivisionQuery
         public int PageNo { get; set; }
         public int PageSize { get; set; }
         public string? SearchText { get; set; }
+        public bool? IsDropDown { get; set; }
     }
 
     public class GetDistrictDivisionIdQueryHandler : IRequestHandler<GetDistrictDivisionIdQuery, ListResult<DistrictDto>>
@@ -36,9 +37,30 @@ namespace ResApp.Application.Com.Queries.GetDivisionQuery
             //    Where(x=> x.DivisionId== request.DivId).ToListAsync(cancellationToken);
             /*q => q.IsActive && q.AppId == request.AppId*/
 
-           // var data2 = PaginatedResult<District>(request.PageNo, request.PageSize,cancellationToken);
-            var data = await _context.Districts.Where( x=> (request.DivId == 0 || x.DivisionId == request.DivId) &&
-            (!string.IsNullOrEmpty(request.SearchText) ? x.EnglishName!.ToLower().Contains(request.SearchText.ToLower()) : true)).OrderBy(o => o.EnglishName)
+            // var data2 = PaginatedResult<District>(request.PageNo, request.PageSize,cancellationToken);
+
+            if (request.IsDropDown == true)
+            {
+                var dataDrop = await _context.Districts.Include(x => x.Division).Where(x => (request.DivId == 0 || x.DivisionId == request.DivId) &&
+           (!string.IsNullOrEmpty(request.SearchText) ? x.EnglishName!.ToLower().Contains(request.SearchText.ToLower()) : true)).OrderBy(o => o.EnglishName)
+               .ToPaginatedListAsync(request.PageNo, request.PageSize, cancellationToken);
+
+                result.HasError = false;
+                result.Count = dataDrop.TotalCount;
+                result.Data = dataDrop.Data.Select(s => new DistrictDto
+                {
+                    Id = s.Id,
+                    EnglishName = s.EnglishName,
+                    BanglaName = s.BanglaName,
+                    DivisionName = s.Division!.EnglishName,
+                    DivisionBanglaName = s.Division?.BanglaName,
+                    DivisionId = s.DivisionId.GetValueOrDefault(),
+                }).ToList();
+                return result;
+            }
+
+            var data = await _context.Districts.Include(x=>x.Division).Where( x=> (request.DivId == 0 || x.DivisionId == request.DivId) &&
+            (!string.IsNullOrEmpty(request.SearchText) ? x.EnglishName!.ToLower().Contains(request.SearchText.ToLower()) : true)).OrderBy(o => o.DivisionId)
                 .ToPaginatedListAsync(request.PageNo, request.PageSize, cancellationToken);
 
             var dataCount = await _context.Districts.
@@ -60,6 +82,8 @@ namespace ResApp.Application.Com.Queries.GetDivisionQuery
                     Id = s.Id,
                     EnglishName = s.EnglishName,
                     BanglaName = s.BanglaName,
+                    DivisionName = s.Division!.EnglishName,
+                    DivisionBanglaName = s.Division?.BanglaName,
                     DivisionId=s.DivisionId.GetValueOrDefault(),
                 }).ToList();
             }

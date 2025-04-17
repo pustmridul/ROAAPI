@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.Com.Commands.Division.Update;
+using ResApp.Application.Com.Commands.MemberRegistration;
 using ResApp.Application.Com.Commands.UpdateThana;
 using ResApp.Application.Com.Queries.GetDivisionQuery;
+using ResApp.Application.ROA.Zone.Command;
+using ResApp.Application.ROA.Zone.Queries;
 
 namespace Res.WebApi.Controllers
 {
@@ -31,7 +34,7 @@ namespace Res.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllDistrictByDivisionId(int DivisionId, int pageNo, int pageSize, string appId, string? searchText)
+        public async Task<IActionResult> GetAllDistrictByDivisionId(int DivisionId, int pageNo, int pageSize, string appId, string? searchText, bool? IsDrop)
         {
             return Ok(await Mediator.Send(new GetDistrictDivisionIdQuery()
             {
@@ -40,7 +43,8 @@ namespace Res.WebApi.Controllers
                     PageNo = pageNo,
                     PageSize = pageSize,
                     AppId = appId,
-                    SearchText = searchText
+                    SearchText = searchText,
+                    IsDropDown = IsDrop
             }));
 
         }
@@ -102,5 +106,38 @@ namespace Res.WebApi.Controllers
             return Ok(await Mediator.Send(command));
 
         }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SaveZone(CreateZoneCommand command)
+        {
+            return Ok(await Mediator.Send(command));
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllZoneByDistrictId(int DistricId, int pageNo, int pageSize, string appId, string? searchText)
+        {
+            return Ok(await Mediator.Send(new GetZoneByDistrictIdQuery()
+            {
+                DistrictId = DistricId,
+                PageNo = pageNo,
+                PageSize = pageSize,
+                AppId = appId,
+                SearchText = searchText
+            }));
+
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> RemoveZone(int id)
+        {
+            var result = await Mediator.Send(new DeleteZoneCommand() { Id = id });
+            return Ok(result);
+        }
+
+
+
     }
 }

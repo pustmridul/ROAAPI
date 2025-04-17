@@ -178,11 +178,16 @@ namespace MemApp.Application.Interfaces.Contexts
         #region Division
         DbSet<Division> Divisions { get; }
         DbSet<District> Districts { get; }
+        DbSet<ZoneInfo> ZoneInfos { get; }
         DbSet<Thana> Thanas { get; }
+        DbSet<Municipality> Municipalities { get; }
+        DbSet<UnionInfo> UnionInfos { get; }
+        DbSet<Ward> Wards { get; }
         #endregion
 
         #region Restaurant Owner Member
         DbSet<MemberRegistrationInfo> MemberRegistrationInfos {  get; }
+        DbSet<MultipleOwner> MultipleOwners {  get; }
         #endregion
 
         #region ROA Subscription

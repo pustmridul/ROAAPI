@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using MemApp.Application.Com.Models;
 using MemApp.Application.Services;
 using Dapper;
+using static Dapper.SqlMapper;
 
 
 namespace ResApp.Application.Com.Commands.MemberRegistration
@@ -20,19 +21,12 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
     public class UpdateMemberRegCommand : IRequest<Result<MemberRegistrationInfoDto>>
     {
        public string? EmailId {  get; set; }
-     //   public DateTime? CreatedOn { get; set; }
-    //    public int? LastModifiedBy { get; set; }
-     //   public string? LastModifiedByName { get; set; }
-
-    //    public DateTime? LastModifiedOn { get; set; }
+   
 
         public string? ApplicationNo { get; set; }
 
         public string? Name { get; set; }
-        //public string? FatherName { get; set; }
-        //public string? MotherName { get; set; }
-        //public string? SpouseName { get; set; }
-        //public string? HusbandName { get; set; }
+       
         public string? NomineeName { get; set; }
         public string? InstituteNameBengali { get; set; }
         public string? InstituteNameEnglish { get; set; }
@@ -42,20 +36,16 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }
         public DateTime? BusinessStartingDate { get; set; }
-      //  public string? SignatureImgPath { get; set; }
-    //    public string? TradeLicenseImgPath { get; set; }
-    //    public string? TinImgPath { get; set; }
-
-   //     public bool? IsApproved { get; set; } = false;
-
-      //  public virtual User? ApprovedBy { get; set; }
-
-      //  public DateTime? ApproveTime { get; set; }
-      //  public DateTime? SignatureUploadingTime { get; set; }
+    
 
         public int? DivisionId { get; set; }
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
+
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
 
         [JsonIgnore]
         public string? WebRootPath { get; set; }
@@ -65,6 +55,8 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public IFormFile? TradeLicenseImgFile { get; set; }
         public IFormFile? TinImgFile { get; set; }
         public IFormFile? ProfileImg { get; set; }
+
+        public List<ContactDetailReq>? ContactDetailReq { get; set; } = new List<ContactDetailReq>();
     }
 
     public class UpdateMemberRegCommandHandler : IRequestHandler<UpdateMemberRegCommand, Result<MemberRegistrationInfoDto>>
@@ -345,6 +337,11 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                     memberReg.DistrictId = request.DistrictId;
                     memberReg.DivisionId = request.DivisionId;
                     memberReg.ThanaId = request.ThanaId;
+
+                    memberReg.ZoneId = request.ZoneId;
+                    memberReg.MunicipalityId = request.MunicipalityId;
+                    memberReg.UnionInfoId = request.UnionInfoId;
+                    memberReg.WardId = request.WardId;
                     memberReg.InstituteNameBengali = request.InstituteNameBengali;
                     memberReg.InstituteNameEnglish = request.InstituteNameEnglish;
                     memberReg.MemberTINNo = request.MemberTINNo;
@@ -370,7 +367,22 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
 
                     _context.MemberRegistrationInfos.Update(memberReg);
 
-                    if (await _context.SaveChangesAsync(cancellationToken) > 0)
+                    if (request.ContactDetailReq?.Count > 0)
+                    {
+                        foreach (var item in request.ContactDetailReq)
+                        {
+                            var contact = new MultipleOwner
+                            {
+                                Name = item.Name,
+                                Phone = item.Phone,
+                                Email = item.Phone,
+                                MemberId = memberReg.Id,
+                            };
+                            _context.MultipleOwners.Add(contact);
+                        }
+                    }
+
+                if (await _context.SaveChangesAsync(cancellationToken) > 0)
                     {
 
                         //result.Data.Name = request.Name;

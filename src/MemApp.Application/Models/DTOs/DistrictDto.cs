@@ -18,6 +18,7 @@ namespace ResApp.Application.Models.DTOs
         public int DivisionId { get; set; }
 
         public string? DivisionName { get;set; }
+        public string? DivisionBanglaName { get;set; }
         
     }
 }

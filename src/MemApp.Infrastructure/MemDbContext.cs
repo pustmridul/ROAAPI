@@ -155,11 +155,16 @@ namespace MemApp.Infrastructure
         #region Division
         public DbSet<Division> Divisions => Set<Division>();
         public DbSet<District> Districts => Set<District>();
+        public DbSet<ZoneInfo> ZoneInfos => Set<ZoneInfo>();
         public DbSet<Thana> Thanas => Set<Thana>();
+        public DbSet<Municipality> Municipalities => Set<Municipality>();
+        public DbSet<UnionInfo> UnionInfos => Set<UnionInfo>();
+        public DbSet<Ward> Wards => Set<Ward>();
         #endregion
 
         #region Restaurant Owner Member
         public DbSet<MemberRegistrationInfo> MemberRegistrationInfos => Set<MemberRegistrationInfo>();
+        public DbSet<MultipleOwner> MultipleOwners => Set<MultipleOwner>();
         #endregion
 
 

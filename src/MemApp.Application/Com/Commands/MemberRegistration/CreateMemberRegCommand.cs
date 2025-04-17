@@ -37,7 +37,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }
         public DateTime? BusinessStartingDate { get; set; }
-        public Decimal? SubscriptionFee { get; set; }
+        public decimal? SubscriptionFee { get; set; }
        
 
         public bool IsApproved { get; set; }
@@ -47,6 +47,11 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
 
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
+
         [JsonIgnore]
         public string? WebRootPath { get; set; }
 
@@ -55,6 +60,8 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public IFormFile? TradeLicenseImgFile { get; set; }
         public IFormFile? TinImgFile { get; set; }
         public IFormFile? ProfileImg { get; set; }
+
+        public List<ContactDetailReq>? ContactDetailReq { get; set; } = new List<ContactDetailReq>();
     }
 
     public class CreateMemberRegCommandHandler : IRequestHandler<CreateMemberRegCommand, Result<MemberRegistrationInfoDto>>
@@ -302,7 +309,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                      
                       ApplicationNo = request.ApplicationNo,
                     //  MemberShipNo=GenerateMembershipNo(),
-                      MemberShipNo=await GenerateMembershipNoAsync(),// lastmembershipNo,
+                      MemberShipNo= lastmembershipNo, // GenerateMembershipNoAsync(),// lastmembershipNo,
                       IsApproved=false,// request.IsApproved,
                       PermenantAddress=request.PermenantAddress,
                      // Email=request.EmailId,
@@ -311,6 +318,10 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                       DistrictId=request.DistrictId,
                       DivisionId=request.DivisionId,
                       ThanaId=request.ThanaId,
+                      ZoneId=request.ZoneId,
+                      MunicipalityId=request.MunicipalityId,
+                      UnionInfoId=request.UnionInfoId,
+                      WardId=request.WardId,
                       InstituteNameBengali=request.InstituteNameBengali,
                       InstituteNameEnglish=request.InstituteNameEnglish,
                       MemberTINNo=request.MemberTINNo,
@@ -339,6 +350,22 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                     //}
 
                     _context.MemberRegistrationInfos.Add(entity);
+
+                    if(request.ContactDetailReq?.Count >0)
+                    {
+                        foreach (var item in request.ContactDetailReq)
+                        {
+                            var contact = new MultipleOwner
+                            {
+                                Name = item.Name,
+                                Phone = item.Phone,
+                                Email=item.Phone,
+                                //MemberId=entity.Id,
+                                Member=entity
+                            };
+                            _context.MultipleOwners.Add(contact);
+                        }
+                    }
 
                     if (await _context.SaveChangesAsync(cancellationToken) > 0)
                     {

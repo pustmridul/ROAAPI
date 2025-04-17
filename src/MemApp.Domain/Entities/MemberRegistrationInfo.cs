@@ -51,8 +51,19 @@ namespace Res.Domain.Entities
         public Division? Division { get; set; }
         public int? DistrictId { get; set; }
         public District? District { get; set; }
+        public int? ZoneId { get; set; }
+        public ZoneInfo? Zone { get; set; }
         public int? ThanaId { get; set; }
         public Thana? Thana { get; set; }
+
+        public int? MunicipalityId { get; set; }
+        public Municipality? Municipality { get; set; }
+
+        public int? UnionInfoId { get; set; }
+        public UnionInfo? UnionInfo { get; set; }
+
+        public int? WardId { get; set; }
+        public Ward? Ward { get; set; }
 
         public bool IsActive { get; set; }
 

@@ -14,6 +14,11 @@ namespace ResApp.Application.Models.DTOs
         public string? BanglaName { get; set; }
         public DateTime? CreatedOn { get; set; }
 
-        public int DistrictId { get; set; }
+        public int? DistrictId { get; set; }
+        public int? ZoneId { get; set; }
+
+        public string? DistrictName { get; set; }
+        public string? DistrictBanglaName { get; set; }
+        public string? ZoneName { get; set; }
     }
 }
