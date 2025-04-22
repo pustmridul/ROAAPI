@@ -12,14 +12,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResApp.Application.Com.Commands.Subscription
+namespace ResApp.Application.ROA.RoaSubcription.Command
 {
     public class RSubscriptionDueByMemberCommand : IRequest<Result>
     {
-       // public DateTime SyncDate { get; set; } = DateTime.UtcNow;
-      //  public DateTime SyncDate { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Dhaka"));
+        // public DateTime SyncDate { get; set; } = DateTime.UtcNow;
+        //  public DateTime SyncDate { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Dhaka"));
 
-        public int MemberId {  get; set; }
+        public int MemberId { get; set; }
     }
 
     public class RSubscriptionDueByMemberCommandHandler : IRequestHandler<RSubscriptionDueByMemberCommand, Result>
@@ -36,14 +36,14 @@ namespace ResApp.Application.Com.Commands.Subscription
             var result = new Result();
             var userName = _currentUserService.Current().UserName;
 
-            var user =_context.Users.Where(x=>x.UserName == userName).FirstOrDefault();
+            var user = _context.Users.Where(x => x.UserName == userName).FirstOrDefault();
 
             // var dataList = new List<SubscriptionDueTemp>();
             var dataList = new List<RoSubscriptionDueTemp>();
             DateTime startDate = new DateTime(2025, 01, 1);
 
-            var member= await _context.MemberRegistrationInfos                 
-                   .Where(q => q.Id==request.MemberId && q.IsActive && q.IsApproved && q.PaidTill != null)
+            var member = await _context.MemberRegistrationInfos
+                   .Where(q => q.Id == request.MemberId && q.IsActive && q.IsApproved && q.PaidTill != null)
                    .AsNoTracking()
                    .FirstOrDefaultAsync(cancellationToken);
 
@@ -62,9 +62,10 @@ namespace ResApp.Application.Com.Commands.Subscription
 
             if (lastSyncDate == null)
             {
-                result.HasError = true;
-                result.Messages?.Add("Please generate the subscription first!");
-                return result;
+                //lastSyncDate!.SyncDate = startDate;
+                //result.HasError = true;
+                //result.Messages?.Add("Please generate the subscription first!");
+                //return result;
             }
 
             List<DateTime> months = new List<DateTime>();
@@ -74,7 +75,7 @@ namespace ResApp.Application.Com.Commands.Subscription
 
             }
 
-             months = GetMonthList(member!.PaidTill.GetValueOrDefault(), DateTime.Now);
+            months = GetMonthList(member!.PaidTill.GetValueOrDefault(), DateTime.Now);
 
             try
             {
@@ -94,7 +95,7 @@ namespace ResApp.Application.Com.Commands.Subscription
                             MemberId = member.Id,
                             ActualPaymentDate = m,//  sub.StartDate,
                             SubscriptionFeeId = 1,// sub.Id,
-                            SyncDate = lastSyncDate == null ? startDate: lastSyncDate.SyncDate, // request.SyncDate,
+                            SyncDate = lastSyncDate == null ? startDate : lastSyncDate.SyncDate, // request.SyncDate,
                             GenerateDate = DateTime.Now, // new DateTime(request.SyncDate.Year, request.SyncDate.Month, 1),
                             LateFeePer = 0,
                             SubscriptionYear = m.Year,
@@ -103,7 +104,7 @@ namespace ResApp.Application.Com.Commands.Subscription
                             SubscriptionName = "Monthly",// sub.Title,                                                                          
                             IsQBSync = false,
                             // IsPaid = false ,
-                            IsPaid = false, 
+                            IsPaid = false,
                             QBCusName = member.Name,
                             QBSyncDate = null,
                             GeneratedBy = "Manually",
@@ -113,7 +114,7 @@ namespace ResApp.Application.Com.Commands.Subscription
                         dataList.Add(obj);
 
                     }
-                   
+
                 }
                 _context.RoSubscriptionDueTemps.AddRange(dataList);
                 await _context.SaveAsyncOnly();
@@ -130,17 +131,17 @@ namespace ResApp.Application.Com.Commands.Subscription
                 result.HasError = true;
                 //  result.Messages.Add(" Date : " + request.SyncDate + "Sync success");
                 return result;
-              //  throw new Exception(ex.Message);
+                //  throw new Exception(ex.Message);
             }
-          
-          
+
+
         }
 
-        
+
 
         static List<DateTime> GetMonthList(DateTime start, DateTime end)
         {
-            return Enumerable.Range(1, ((end.Year - start.Year) * 12 + end.Month - start.Month))
+            return Enumerable.Range(1, (end.Year - start.Year) * 12 + end.Month - start.Month)
                              // .Select(i => start.AddMonths(i).ToString("yyyy-MM"))
                              .Select(i => new DateTime(start.Year, start.Month, 1).AddMonths(i))
                              .ToList();

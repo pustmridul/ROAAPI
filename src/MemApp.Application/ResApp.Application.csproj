@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Com\Commands\ROASubscription\Queries\" />
     <Folder Include="Mem\Attendances\Command\" />
     <Folder Include="Mem\Dashboard\Command\" />
     <Folder Include="PaymentGateway\SslCommerz\Queries\" />

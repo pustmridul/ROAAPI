@@ -1,19 +1,14 @@
 ﻿using MediatR;
-using MemApp.Application;
-using MemApp.Application.Mem.Subscription.Command;
-using MemApp.Application.Mem.Subscription.Model;
-using MemApp.Application.Mem.Subscription.Queries;
 using MemApp.Reporting;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.Com.Commands.ROAPayment;
 using ResApp.Application.Com.Commands.ROAPayment.Models;
 using ResApp.Application.Com.Commands.ROAPayment.Queries;
-using ResApp.Application.Com.Commands.ROASubscription.Queries;
-using ResApp.Application.Com.Commands.Subscription;
+using ResApp.Application.ROA.RoaSubcription.Queries;
 using ResApp.Application.Com.Queries.ROSubcriptionPaymentReport;
 using System.Data;
+using ResApp.Application.ROA.RoaSubcription.Command;
 
 namespace Res.WebApi.Controllers
 {

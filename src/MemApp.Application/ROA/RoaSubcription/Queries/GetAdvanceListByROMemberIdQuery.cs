@@ -13,9 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ResApp.Application.Com.Commands.ROASubscription.Queries
+namespace ResApp.Application.ROA.RoaSubcription.Queries
 {
-    
+
     public class GetAdvanceListByROMemberIdQuery : IRequest<ListResult<MemberSubPaymentRes>>
     {
         public int MemberId { get; set; }
@@ -36,16 +36,16 @@ namespace ResApp.Application.Com.Commands.ROASubscription.Queries
             {
                 var result = new ListResult<MemberSubPaymentRes>
                 {
-                    Data= new List<MemberSubPaymentRes>()
+                    Data = new List<MemberSubPaymentRes>()
                 };
 
                 var memberObj = await _context.MemberRegistrationInfos
                    .AsNoTracking()
                    .SingleOrDefaultAsync(s => s.Id == request.MemberId && s.IsApproved, cancellationToken);
-              //  .Select(s=> new {s.Id, s.PaidTill, s.Phone, s.Email, s.MembershipNo, s.MemberTypeId});
+                //  .Select(s=> new {s.Id, s.PaidTill, s.Phone, s.Email, s.MembershipNo, s.MemberTypeId});
 
 
-            
+
                 if (memberObj != null)
                 {
 
@@ -82,7 +82,7 @@ namespace ResApp.Application.Com.Commands.ROASubscription.Queries
                         return result;
                     }
 
-                    List<DateTime> next12Months = GetNext12Months(memberObj.PaidTill.GetValueOrDefault()).OrderBy(x=>x).ToList();
+                    List<DateTime> next12Months = GetNext12Months(memberObj.PaidTill.GetValueOrDefault()).OrderBy(x => x).ToList();
                     int n = 0;
                     foreach (var month in next12Months)
                     {
@@ -106,7 +106,7 @@ namespace ResApp.Application.Com.Commands.ROASubscription.Queries
                     }
 
                     result.HasError = false;
-                 
+
                 }
                 else
                 {

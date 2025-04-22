@@ -165,6 +165,7 @@ namespace MemApp.Infrastructure
         #region Restaurant Owner Member
         public DbSet<MemberRegistrationInfo> MemberRegistrationInfos => Set<MemberRegistrationInfo>();
         public DbSet<MultipleOwner> MultipleOwners => Set<MultipleOwner>();
+        public DbSet<RoaMemberCategory> RoaMemberCategories => Set<RoaMemberCategory>();
         #endregion
 
 

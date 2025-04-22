@@ -83,6 +83,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     MunicipalityId = data.MunicipalityId.GetValueOrDefault(),
                     UnionInfoId = data.UnionInfoId.GetValueOrDefault(),
                     WardId = data.WardId.GetValueOrDefault(),
+                    MemberCategoryId = data.MemberCategoryId.GetValueOrDefault(),
 
                     DivisionName = data.Division?.EnglishName, // _context.Divisions.Where(x => x.Id == data.DivisionId).FirstOrDefault()!.EnglishName,
                     DistrictName = _context.Districts.Where(x => x.Id == data.DistrictId).FirstOrDefault()!.EnglishName,

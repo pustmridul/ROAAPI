@@ -46,7 +46,10 @@ namespace MemApp.Infrastructure.Services
                 //      .OrderBy(c => c.StartDate)
                 //      .AsNoTracking()
                 //      .ToListAsync();
-                List<DateTime> months = GetMonthList(startDate, syncDate);
+
+                var months = new List<DateTime>();
+
+               //  months = GetMonthList(startDate, syncDate);
 
                 var lastSyncDate = await _context.RoSubscriptionDueTemps
                 .OrderByDescending(q => q.SyncDate)
@@ -54,17 +57,20 @@ namespace MemApp.Infrastructure.Services
                 .FirstOrDefaultAsync();
                 if (lastSyncDate == null)
                 {
+                    months = GetMonthList(startDate, syncDate);
                     //  var s = subChargeList.OrderBy(q => q.StartDate).FirstOrDefault()?.StartDate;
-                    var firstMonth = months.OrderBy(q => q).FirstOrDefault();
-                    if (firstMonth != null)
-                    {
-                        // startDate = s ?? startDate;
-                        startDate = firstMonth;
-                    }
+                    //var firstMonth = months.OrderBy(q => q).FirstOrDefault();
+                    //if (firstMonth != null)
+                    //{
+                    //    // startDate = s ?? startDate;
+                    //    startDate = firstMonth;
+                    //    months = GetMonthList(startDate, syncDate);
+                    //}
                 }
                 else
                 {
                     startDate = lastSyncDate.SyncDate;
+
                 }
 
                 if (memberList.Count > 0)
@@ -73,7 +79,7 @@ namespace MemApp.Infrastructure.Services
                     {
                         if (m.PaidTill > startDate)
                         {
-                            startDate = m.PaidTill ?? startDate;
+                           // startDate = m.PaidTill ?? startDate;
                         }
                         //  var dueSubscription = subChargeList.Where(q => q.StartDate > m.PaidTill).ToList();
                         var dueSubscription = months.Where(q => q > m.PaidTill).ToList();

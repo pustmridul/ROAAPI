@@ -31,7 +31,7 @@ namespace MemApp.Infrastructure.Services
             var initialDelay = midnight - now; // Time remaining until midnight
 
             // Set up the timer to run at midnight, then every 24 hours
-            _timer = new Timer(SendDailyEmails, null, initialDelay, TimeSpan.FromDays(1));
+            _timer = new Timer(SendDailyEmails!, null, initialDelay, TimeSpan.FromDays(1));
 
             return Task.CompletedTask;
 
@@ -100,12 +100,12 @@ namespace MemApp.Infrastructure.Services
                             {
                                 var message = smsTemplate?.Message?.Replace("[membershipno]", user.MemberShipNo).Replace("[membername]", user.Name);
 
-                               _broadcastHandler.SendSms(user.Phone, message, "English", user.Name,user.MemberShipNo).Wait();
+                               _broadcastHandler.SendSms(user.Phone!, message!, "English", user.Name,user.MemberShipNo).Wait();
                             }
                             if (emailTemplate != null)
                             {
                                 var message = emailTemplate?.Message?.Replace("[membershipno]", user.MemberShipNo).Replace("[membername]", user.Name);
-                                _broadcastHandler.SendEmail(user.Email, emailTemplate.Subject, message, user.Name, user.MemberShipNo).Wait();
+                                _broadcastHandler.SendEmail(user.Email, emailTemplate!.Subject!, message!, user.Name, user.MemberShipNo).Wait();
                             }
                         }
                     }
@@ -134,12 +134,12 @@ namespace MemApp.Infrastructure.Services
                             {
                                 var message = smsTemplate?.Message?.Replace("[membershipno]", user.MemberShipNo).Replace("[membername]", user.Name);
 
-                                _broadcastHandler.SendSms(user.Phone, message, "English", user.Name, user.MemberShipNo).Wait();
+                                _broadcastHandler.SendSms(user.Phone!, message!, "English", user.Name, user.MemberShipNo).Wait();
                             }
                             if (emailTemplate != null)
                             {
                                 var message = emailTemplate?.Message?.Replace("[membershipno]", user.MemberShipNo).Replace("[membername]", user.Name);
-                                _broadcastHandler.SendEmail(user.Email, emailTemplate.Subject, message, user.Name, user.MemberShipNo).Wait();
+                                _broadcastHandler.SendEmail(user.Email, emailTemplate!.Subject!, message!, user.Name, user.MemberShipNo).Wait();
                             }
                         }
                     }

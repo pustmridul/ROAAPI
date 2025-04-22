@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResApp.Application.Com.Commands.Subscription
+namespace ResApp.Application.ROA.RoaSubcription.Command
 {
     public class RSubscriptionMonthDueGenerateCommand : IRequest<Result>
     {
@@ -35,15 +35,15 @@ namespace ResApp.Application.Com.Commands.Subscription
             var result = new Result();
             var userName = _currentUserService.Current().UserName;
 
-            var user =_context.Users.Where(x=>x.UserName == userName).FirstOrDefault();
+            var user = _context.Users.Where(x => x.UserName == userName).FirstOrDefault();
 
             // var dataList = new List<SubscriptionDueTemp>();
             var dataList = new List<RoSubscriptionDueTemp>();
             DateTime startDate = new DateTime(2025, 01, 1);
             var memberList = await _context.MemberRegistrationInfos
-                  // .Include(i => i.MemberTypes)
-                 //  .Include(i => i.MemberActiveStatus)
-                 //  .Where(q => q.IsActive && q.IsApproved && q.PaidTill!.Value.Date < request.SyncDate.Date)
+                   // .Include(i => i.MemberTypes)
+                   //  .Include(i => i.MemberActiveStatus)
+                   //  .Where(q => q.IsActive && q.IsApproved && q.PaidTill!.Value.Date < request.SyncDate.Date)
                    .Where(q => q.IsActive && q.IsApproved && q.PaidTill!.Value.Date < request.SyncDate.Date)
                    .AsNoTracking()
                    .ToListAsync(cancellationToken);
@@ -61,8 +61,8 @@ namespace ResApp.Application.Com.Commands.Subscription
             //                .OrderBy(c => c.StartDate)
             //                .AsNoTracking()
             //                .ToListAsync(cancellationToken);
-
-            List<DateTime> months = GetMonthList(startDate, request.SyncDate);
+            var months = new List<DateTime>();
+            // List<DateTime> months = GetMonthList(startDate, request.SyncDate);
 
             //var lastSyncDate = await _context.SubscriptionDueTemps
             //    .OrderByDescending(q => q.SyncDate)
@@ -75,35 +75,36 @@ namespace ResApp.Application.Com.Commands.Subscription
                .FirstOrDefaultAsync(cancellationToken);
             if (lastSyncDate == null)
             {
+
                 //  var s = subChargeList.OrderBy(q => q.StartDate).FirstOrDefault()?.StartDate;
-                var firstMonth = months.OrderBy(q => q).FirstOrDefault();
-                if (firstMonth != null)
-                {
-                   // startDate = s ?? startDate;
-                    startDate = firstMonth;
-                }
+                //var firstMonth = months.OrderBy(q => q).FirstOrDefault();
+                //if (firstMonth != null)
+                //{
+                //    // startDate = s ?? startDate;
+                //    startDate = firstMonth;
+                //}
             }
             else
             {
                 startDate = lastSyncDate.SyncDate;
             }
-
+            months = GetMonthList(startDate, request.SyncDate);
             if (memberList.Count > 0)
             {
                 foreach (var m in memberList)
                 {
                     if (m.PaidTill > startDate)
                     {
-                        startDate = m.PaidTill ?? startDate;
+                        //   startDate = m.PaidTill ?? startDate;
                     }
-                   // var dueSubscription = subChargeList.Where(q => q.StartDate > m.PaidTill).ToList();
+                    // var dueSubscription = subChargeList.Where(q => q.StartDate > m.PaidTill).ToList();
                     var dueSubscription = months.Where(q => q > m.PaidTill).ToList();
 
                     if (dueSubscription.Any())
                     {
                         foreach (var sub in dueSubscription)
                         {
-                           // if (sub.StartDate.Date == request.SyncDate.Date)
+                            // if (sub.StartDate.Date == request.SyncDate.Date)
                             if (sub == request.SyncDate.Date)
                             {
 
@@ -112,7 +113,7 @@ namespace ResApp.Application.Com.Commands.Subscription
                                 var checkExist = _context.RoSubscriptionDueTemps
                                                              .AsNoTracking()
                                                              .Any(x => x.MemberId == m.Id && x.SubscriptionMonth == sub && x.SubscriptionYear == sub.Year);
-                                if(!checkExist)
+                                if (!checkExist)
                                 {
                                     var obj = new RoSubscriptionDueTemp()
                                     {
@@ -124,10 +125,10 @@ namespace ResApp.Application.Com.Commands.Subscription
                                         GenerateDate = new DateTime(request.SyncDate.Year, request.SyncDate.Month, 1),
                                         LateFeePer = 0,// sub.LateFee ?? 0,
                                                        //  SubscriptionYear = sub.SubscribedYear ?? "",
-                                        SubscriptionYear = sub.Year,  
+                                        SubscriptionYear = sub.Year,
                                         PaymentAmount = m.SubscriptionFee.GetValueOrDefault(),//  m.SubscriptionFee?? sub.SubscriptionFee,
                                         LateAmount = 0, //sub.LateFee.GetValueOrDefault(),
-                                                         //  SubscriptionName = sub.SubscriptionMode.Name,
+                                                        //  SubscriptionName = sub.SubscriptionMode.Name,
                                         SubscriptionName = "Monthly",// sub.Title,                                                                          
                                         IsQBSync = false,
                                         // IsPaid = false ,
@@ -222,7 +223,7 @@ namespace ResApp.Application.Com.Commands.Subscription
 
         static List<DateTime> GetMonthList(DateTime start, DateTime end)
         {
-            return Enumerable.Range(0, ((end.Year - start.Year) * 12 + end.Month - start.Month) + 1)
+            return Enumerable.Range(0, (end.Year - start.Year) * 12 + end.Month - start.Month + 1)
                              // .Select(i => start.AddMonths(i).ToString("yyyy-MM"))
                              .Select(i => new DateTime(start.Year, start.Month, 1).AddMonths(i))
                              .ToList();

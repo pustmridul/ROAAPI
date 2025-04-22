@@ -65,6 +65,9 @@ namespace Res.Domain.Entities
         public int? WardId { get; set; }
         public Ward? Ward { get; set; }
 
+        public int? MemberCategoryId { get; set; }
+        public RoaMemberCategory? MemberCategory { get; set; }
+
         public bool IsActive { get; set; }
 
         public string? Email { get; set; }

@@ -81,7 +81,7 @@ namespace MemApp.Infrastructure.Services
 
                                         var obj = new SubscriptionDueTemp()
                                         {
-                                            MemberShipNo = m.MembershipNo,
+                                            MemberShipNo = m.MembershipNo!,
                                             MemberId = m.Id,
                                             ActualPaymentDate = sub.StartDate,
                                             SubscriptionFeesId = sub.Id,
@@ -108,7 +108,7 @@ namespace MemApp.Infrastructure.Services
                                 {
                                     var obj = new SubscriptionDueTemp()
                                     {
-                                        MemberShipNo = m.MembershipNo,
+                                        MemberShipNo = m.MembershipNo!,
                                         ActualPaymentDate = sub.StartDate,
                                         SubscriptionFeesId = sub.Id,
                                         MemberId = m.Id,

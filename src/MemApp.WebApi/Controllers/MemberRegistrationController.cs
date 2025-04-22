@@ -12,6 +12,7 @@ using ResApp.Application.Com.Commands.UpdateThana;
 using ResApp.Application.Com.Queries.GetMemberRegistrationInfo;
 using ResApp.Application.Models;
 using ResApp.Application.Models.DTOs;
+using ResApp.Application.ROA.MemberCategory.Queries;
 
 namespace Res.WebApi.Controllers
 {
@@ -109,8 +110,10 @@ namespace Res.WebApi.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> MakeMemberApprove(ApproveMemberRegCommand command)
+        public async Task<IActionResult> MakeMemberApprove([FromForm] ApproveMemberRegCommand command)
         {
+            if(command==null) 
+                throw new ArgumentNullException(nameof(command));
            
             return Ok(await Mediator.Send(command));
         }
@@ -137,6 +140,16 @@ namespace Res.WebApi.Controllers
         {
             var result = await Mediator.Send(new DeleteMemberInfoCommand() { Id = id });
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllMemberCategory()
+        {
+            return Ok(await Mediator.Send(new GetAllRoMemberCatQuery()
+            {
+              
+            }));
         }
     }
 }

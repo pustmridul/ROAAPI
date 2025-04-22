@@ -6,7 +6,7 @@ using ResApp.Application.Com.Commands.ROAPayment.Models;
 using ResApp.Application.Com.Commands.ROAPayment;
 using ResApp.Application.Com.Commands.RoaMembershipFee;
 using ResApp.Application.Com.Commands.RoaMembershipFee.Models;
-using ResApp.Application.Com.Commands.ROASubscription.Queries;
+using ResApp.Application.ROA.RoaSubcription.Queries;
 using ResApp.Application.Com.Commands.RoaMembershipFee.Queries;
 
 namespace Res.WebApi.Controllers

@@ -188,6 +188,7 @@ namespace MemApp.Application.Interfaces.Contexts
         #region Restaurant Owner Member
         DbSet<MemberRegistrationInfo> MemberRegistrationInfos {  get; }
         DbSet<MultipleOwner> MultipleOwners {  get; }
+        DbSet<RoaMemberCategory> RoaMemberCategories {  get; }
         #endregion
 
         #region ROA Subscription

@@ -4,11 +4,8 @@ using MemApp.Application.Interfaces;
 using MemApp.Application.Interfaces.Contexts;
 using Microsoft.EntityFrameworkCore;
 using ResApp.Application.Models.DTOs;
-using Microsoft.AspNetCore.Hosting; // Ensure this namespace is included
-using Microsoft.Extensions.Hosting;
-using Res.Domain.Entities;
-using MemApp.Domain.Entities;
-using Microsoft.AspNetCore.Http;
+using ResApp.Application.ROA.RoaSubcription;
+using ResApp.Application.ROA.RoaSubcription.Command;
 
 
 namespace ResApp.Application.Com.Commands.MemberRegistration
@@ -17,11 +14,12 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
     {
       // public string? UserName {  get; set; }
        public int? MemberId { get; set; }
+       public int? MemberCategoryId { get; set; }
        public decimal? MembershipFee { get; set; }
        public decimal? SubscriptionFee { get; set; }
        public string? Note { get; set; }
-
-     //  public bool IsApproved { get; set; }
+       public DateTime? SubscriptionStarts { get; set; }
+        //  public bool IsApproved { get; set; }
     }
 
     public class ApproveMemberRegCommandHandler : IRequestHandler<ApproveMemberRegCommand, Result<MemberRegistrationInfoDto>>
@@ -69,7 +67,12 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
             //    result.Messages.Add("Member is already approved!!!");
             //    return result;
             //}
-                             
+            if (request.SubscriptionStarts == null)
+            {
+                result.HasError = true;
+                result.Messages.Add("Subscription Starting Date can not be empty!!!");
+                return result;
+            }              
             
 
             if (checkMemberExist != null)
@@ -79,23 +82,43 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
 
                     checkMemberExist.IsApproved = true; // request.IsApproved;
                     checkMemberExist.Note=request.Note;
+                    checkMemberExist.MemberCategoryId=request.MemberCategoryId;
                     checkMemberExist.MembershipFee=request.MembershipFee;
                     checkMemberExist.SubscriptionFee=request.SubscriptionFee;
                     checkMemberExist.ApprovedBy= _currentUserService.Current().Id;
                     checkMemberExist.ApproveTime = DateTime.Now;
 
+                    if (checkMemberExist.SubscriptionStarts == null && checkMemberExist.PaidTill == null && request.SubscriptionStarts != null)
+                    {
+                        checkMemberExist.SubscriptionStarts = request.SubscriptionStarts;
+                        // Subtract one month to go to the previous month
+                        DateTime previousMonth = request.SubscriptionStarts.GetValueOrDefault().AddMonths(-1);
+
+                        // Get the last day of that month
+                        int lastDay = DateTime.DaysInMonth(previousMonth.Year, previousMonth.Month);
+                        //var paidTill= request.SubscriptionStarts.AddMonths(-1);
+                        checkMemberExist.PaidTill = new DateTime(previousMonth.Year, previousMonth.Month, lastDay);
+
+
+                    }
 
 
                     _context.MemberRegistrationInfos.Update(checkMemberExist);
 
                     if (await _context.SaveChangesAsync(cancellationToken) > 0)
                     {
+                        if (checkMemberExist.SubscriptionStarts != null && checkMemberExist.PaidTill != null && request.SubscriptionStarts != null)
+                        {
+                            var checkExist = _context.RoSubscriptionDueTemps
+                                         .AsNoTracking()
+                                         .Any(x => x.MemberId == checkMemberExist.Id);
+                            if (!checkExist)
+                            {
 
-                        //result.Data.Name = request.Name;
-                        //result.Data.UserName = request.UserName;
-                        //result.Data.EmailId = request.EmailId;
-                        //result.Data.PhoneNo = request.PhoneNo;
-                        //result.Data.Id = user.Id;
+                                await _mediator.Send(new RSubscriptionDueByMemberCommand() { MemberId = checkMemberExist.Id });
+                            }
+                        }
+                            
 
                         result.HasError = false;
                         result.Messages.Add("Member Approve Status changed successfully!!");

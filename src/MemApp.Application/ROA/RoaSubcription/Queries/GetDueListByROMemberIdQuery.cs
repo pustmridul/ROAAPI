@@ -13,9 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ResApp.Application.Com.Commands.ROASubscription.Queries
+namespace ResApp.Application.ROA.RoaSubcription.Queries
 {
-    
+
     public class GetDueListByROMemberIdQuery : IRequest<ListResult<MemberSubPaymentRes>>
     {
         public int MemberId { get; set; }
@@ -39,20 +39,20 @@ namespace ResApp.Application.Com.Commands.ROASubscription.Queries
                 var memberObj = await _context.MemberRegistrationInfos
                    .AsNoTracking()
                    .SingleOrDefaultAsync(s => s.Id == request.MemberId && s.IsApproved, cancellationToken);
-              //  .Select(s=> new {s.Id, s.PaidTill, s.Phone, s.Email, s.MembershipNo, s.MemberTypeId});
+                //  .Select(s=> new {s.Id, s.PaidTill, s.Phone, s.Email, s.MembershipNo, s.MemberTypeId});
 
 
-            
+
                 if (memberObj != null)
                 {
-                    
-                                        
 
-                      var  data = await _context.RoSubscriptionDueTemps.AsNoTracking()                        
-                           .Where(q => q.MemberId== request.MemberId && q.IsPaid == false)
-                           .OrderBy(c => c.SubscriptionMonth)
-                           .AsNoTracking()
-                           .ToListAsync(cancellationToken);
+
+
+                    var data = await _context.RoSubscriptionDueTemps.AsNoTracking()
+                         .Where(q => q.MemberId == request.MemberId && q.IsPaid == false)
+                         .OrderBy(c => c.SubscriptionMonth)
+                         .AsNoTracking()
+                         .ToListAsync(cancellationToken);
 
 
                     if (data.Count == 0)
@@ -66,18 +66,18 @@ namespace ResApp.Application.Com.Commands.ROASubscription.Queries
                         result.Count = data.Count;
                         result.Data = data.Select(s => new MemberSubPaymentRes
                         {
-                          MemberId = s.MemberId.GetValueOrDefault(),
-                          PaymentAmount=s.PaymentAmount,
-                         // ActualPaymentDate=s.ActualPaymentDate,
-                          LateAmount=s.LateAmount,
-                          Id = s.Id,
-                          SubscriptionMonth=s.SubscriptionMonth.GetValueOrDefault(),
-                          SubscriptionName=s.SubscriptionName,
-                          SubscriptionYear=s.SubscriptionYear.GetValueOrDefault(),
-                          MemberName=s.QBCusName,
-                          IsChecked=false
-                         // PaymentDate=s.
-                        
+                            MemberId = s.MemberId.GetValueOrDefault(),
+                            PaymentAmount = s.PaymentAmount,
+                            // ActualPaymentDate=s.ActualPaymentDate,
+                            LateAmount = s.LateAmount,
+                            Id = s.Id,
+                            SubscriptionMonth = s.SubscriptionMonth.GetValueOrDefault(),
+                            SubscriptionName = s.SubscriptionName,
+                            SubscriptionYear = s.SubscriptionYear.GetValueOrDefault(),
+                            MemberName = s.QBCusName,
+                            IsChecked = false
+                            // PaymentDate=s.
+
 
 
                         }).ToList();
@@ -104,6 +104,6 @@ namespace ResApp.Application.Com.Commands.ROASubscription.Queries
             }
 
         }
-       
+
     }
 }

@@ -51,9 +51,9 @@ namespace MemApp.Infrastructure.CacheData
 
         public async Task<IList<MemberRes>> GetAllMember()
         {
-            if (_memoryCache.TryGetValue(StaticData.CacheKey.GetMemberList, out IList<MemberRes> dataList))
+            if (_memoryCache.TryGetValue(StaticData.CacheKey.GetMemberList, out IList<MemberRes>? dataList))
             {
-                return dataList;
+                return dataList!;
             }
             else
             {
@@ -130,9 +130,9 @@ namespace MemApp.Infrastructure.CacheData
 
         public async Task<IList<MessageTemplateReq>> GetAllMessageTemplate()
         {
-            if (_memoryCache.TryGetValue(StaticData.CacheKey.GetMessageTemplate, out IList<MessageTemplateReq> dataList))
+            if (_memoryCache.TryGetValue(StaticData.CacheKey.GetMessageTemplate, out IList<MessageTemplateReq>? dataList))
             {
-                return dataList;
+                return dataList!;
             }
             else
             {

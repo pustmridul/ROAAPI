@@ -4,17 +4,10 @@ using MemApp.Application.Interfaces;
 using MemApp.Application.Interfaces.Contexts;
 using Microsoft.EntityFrameworkCore;
 using ResApp.Application.Models.DTOs;
-using Microsoft.AspNetCore.Hosting; // Ensure this namespace is included
-using Microsoft.Extensions.Hosting;
 using Res.Domain.Entities;
-using MemApp.Domain.Entities;
 using Microsoft.AspNetCore.Http;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using MemApp.Application.Mem.TopUps.Command;
-using ResApp.Application.Com.Commands.Subscription;
-using AutoMapper.Execution;
-using MemApp.Application.Mem.Members.Models;
+using ResApp.Application.ROA.RoaSubcription;
+using ResApp.Application.ROA.RoaSubcription.Command;
 
 
 namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo

@@ -63,6 +63,9 @@ namespace ResApp.Application.Models.DTOs
         public int? MunicipalityId { get; set; }
         public int? UnionInfoId { get; set; }
         public int? WardId { get; set; }
+        public int? MemberCategoryId { get; set; }
+        public string? MemberCategoryName { get; set; }
+
 
         public string? DivisionName {  get; set; }
         public string? DistrictName {  get; set; }
