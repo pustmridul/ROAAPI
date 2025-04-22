@@ -151,13 +151,14 @@ namespace Res.WebApi.Controllers
                     dataTable.Rows.Add(row);
                 }
 
-                Dictionary<string, DataTable> data = new();
-
-                data.Add("ds", dataTable);
-                data.Add("master", masterDataTable);
+                Dictionary<string, DataTable> data = new()
+                {
+                    { "ds", dataTable },
+                    { "master", masterDataTable }
+                };
                 var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "RoSubscriptionPaymentReport" + ".rdlc";
 
-                ReportDomain reportDomain = new("PDF", data, path, null);
+                ReportDomain reportDomain = new("PDF", data, path, null!);
                 return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + "PDF");
 
                 //localReport.DataSources.Add(new ReportDataSource("ds", dataTable));

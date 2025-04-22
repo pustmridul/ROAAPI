@@ -18,12 +18,22 @@ namespace Res.Domain.Entities.RoaCommittee
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
 
+        public int? ZoneId { get; set; }
+        public ZoneInfo? Zone { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
+
         public bool IsActive { get; set; }
         public int CommitteeYear { get; set; }
         public RoCommitteeCategory? CommitteeCategory { get; set; }
         public Division? Division { get; set; }
         public District? District { get; set; }
         public Thana? Thana { get; set; }
+       
+        public Municipality? Municipality { get; set; }
+        public UnionInfo? UnionInfo { get; set; }
+        public Ward? Ward { get; set; }
         public ICollection<RoCommitteeDetail> CommitteeDetails { get; set; }
     }
 }

@@ -119,22 +119,70 @@ namespace ResApp.Application.ROA.Committees.Queries
                     {
                         query = query.Where(x => x.CommitteeYear == request.Model.Year);
                     }
+                    if(request.Model.DivisionId != null || request.Model.DistrictId != null || request.Model.ZoneId != null
+                        || request.Model.ThanaId != null || request.Model.MunicipalityId != null || request.Model.UnionInfoId != null || request.Model.WardId != null)
+                    {
+                        query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId
+                                                && x.ZoneId == request.Model.ZoneId && x.ThanaId == request.Model.ThanaId && x.MunicipalityId == request.Model.MunicipalityId
+                                                && x.UnionInfoId == request.Model.UnionInfoId && x.WardId == request.Model.WardId);
+                    }
 
-                    if (request.Model.DivisionId != null && request.Model.DistrictId == null && request.Model.ThanaId == null)
-                    {
-                        // Only Division level
-                        query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == null && x.ThanaId == null);
-                    }
-                    else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ThanaId == null)
-                    {
-                        // Only District level
-                        query = query.Where(x => x.DivisionId==request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ThanaId == null);
-                    }
-                    else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ThanaId != null)
-                    {
-                        // Thana level
-                        query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ThanaId == request.Model.ThanaId);
-                    }
+                  
+                    //if (request.Model.DivisionId != null && request.Model.DistrictId == null && request.Model.ZoneId==null 
+                    //    && request.Model.ThanaId == null && request.Model.MunicipalityId == null && request.Model.UnionInfoId == null && request.Model.WardId == null)
+                    //{
+                    //    // Only Division level
+                    //    query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == null 
+                    //                              && x.ZoneId==null && x.ThanaId == null && x.MunicipalityId==null 
+                    //                              && x.UnionInfoId==null && x.WardId==null);
+                    //}
+                    //else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ZoneId==null 
+                    //    && request.Model.ThanaId == null && request.Model.MunicipalityId == null && request.Model.UnionInfoId == null && request.Model.WardId == null)
+                    //{
+                    //    // Only District level
+                    //    query = query.Where(x => x.DivisionId==request.Model.DivisionId && x.DistrictId == request.Model.DistrictId 
+                    //                                && x.ZoneId == null && x.ThanaId == null && x.MunicipalityId == null
+                    //                                && x.UnionInfoId == null && x.WardId == null);
+                    //}
+                    //else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ZoneId != null
+                    //    && request.Model.ThanaId == null && request.Model.MunicipalityId == null && request.Model.UnionInfoId == null && request.Model.WardId == null)
+                    //{
+                    //    // Only Zone level
+                    //    query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ZoneId == request.Model.ZoneId
+                    //                                    && x.ThanaId == null && x.MunicipalityId == null
+                    //                                    && x.UnionInfoId == null && x.WardId == null);
+                    //}
+                    //else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ZoneId == null && request.Model.ThanaId != null
+                    //                                    && request.Model.MunicipalityId == null && request.Model.UnionInfoId == null && request.Model.WardId == null)
+                    //{
+                    //    // Only Thana level
+                    //    query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ZoneId == request.Model.ZoneId && x.ThanaId == request.Model.ThanaId
+                    //                                     && x.MunicipalityId == null && x.UnionInfoId == null && x.WardId == null);
+                    //}
+
+                    //else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ZoneId == null && request.Model.ThanaId != null
+                    //                                    && request.Model.MunicipalityId != null && request.Model.UnionInfoId == null && request.Model.WardId == null)
+                    //{
+                    //    // Only Municipality level
+                    //    query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ZoneId == request.Model.ZoneId && x.ThanaId == request.Model.ThanaId
+                    //                                     && x.MunicipalityId == request.Model.MunicipalityId && x.UnionInfoId == null && x.WardId == null);
+                    //}
+
+                    //else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ZoneId == null && request.Model.ThanaId != null
+                    //                                    && request.Model.MunicipalityId == null && request.Model.UnionInfoId != null && request.Model.WardId == null)
+                    //{
+                    //    // Only Union level
+                    //    query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ZoneId == request.Model.ZoneId && x.ThanaId == request.Model.ThanaId
+                    //                                     && x.MunicipalityId == null && x.UnionInfoId == request.Model.UnionInfoId && x.WardId == null);
+                    //}
+
+                    //else if (request.Model.DivisionId != null && request.Model.DistrictId != null && request.Model.ZoneId == null && request.Model.ThanaId != null
+                    //                                   && request.Model.MunicipalityId == null && request.Model.UnionInfoId != null && request.Model.WardId != null)
+                    //{
+                    //    // Only Ward level
+                    //    query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId && x.ZoneId == request.Model.ZoneId && x.ThanaId == request.Model.ThanaId
+                    //                                     && x.MunicipalityId == null && x.UnionInfoId == request.Model.UnionInfoId && x.WardId == request.Model.WardId);
+                    //}
 
                     query = query.
                         Include(x=>x.CommitteeDetails).
@@ -164,7 +212,11 @@ namespace ResApp.Application.ROA.Committees.Queries
                         CommitteeCategoryName = s.CommitteeCategoryId != null ? _context.RoCommitteeCategories.FirstOrDefault(x => x.Id == s.CommitteeCategoryId)?.Title : "",
                         DivisionName = s.DivisionId != null ? _context.Divisions.FirstOrDefault(x => x.Id == s.DivisionId)?.EnglishName : "",
                         DistrictName = s.DistrictId != null ? _context.Districts.FirstOrDefault(x => x.Id == s.DistrictId)?.EnglishName : "",
+                        ZoneName = s.ZoneId != null ? _context.ZoneInfos.FirstOrDefault(x => x.Id == s.ZoneId)?.EnglishName : "",
                         ThanaName = s.ThanaId != null ? _context.Thanas.FirstOrDefault(x => x.Id == s.ThanaId)?.EnglishName : "",
+                        MunicipalityName = s.MunicipalityId != null ? _context.Municipalities.FirstOrDefault(x => x.Id == s.MunicipalityId)?.EnglishName : "",
+                        UnionName = s.UnionInfoId != null ? _context.UnionInfos.FirstOrDefault(x => x.Id == s.UnionInfoId)?.EnglishName : "",
+                        WardName = s.WardId != null ? _context.Wards.FirstOrDefault(x => x.Id == s.WardId)?.EnglishName : "",
                         CommitteeDetails = s.CommitteeDetails.Select(s => new RoCommitteeDetailReq
                         {
                             MemberName = s.MemberName,

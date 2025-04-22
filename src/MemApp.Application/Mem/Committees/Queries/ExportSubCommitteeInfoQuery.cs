@@ -40,7 +40,7 @@ namespace MemApp.Application.Mem.Committees.Queries
                 result.Title= data.Title;
                 result.CommitteeYear=data.CommitteeYear;
                 result.CommitteeDate = data.CommitteeDate.ToString("yyyy-mm-dd");
-                result.CommitteeCategoryName = data.CommitteeCategoryId > 0 ? committeeCategory.SingleOrDefault(s => s.Id == data.CommitteeCategoryId).Title : "";         
+                result.CommitteeCategoryName = data.CommitteeCategoryId > 0 ? committeeCategory.SingleOrDefault(s => s.Id == data.CommitteeCategoryId)!.Title : "";         
             }
 
             return result;

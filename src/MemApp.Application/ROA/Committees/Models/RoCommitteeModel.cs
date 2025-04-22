@@ -21,10 +21,18 @@ namespace ResApp.Application.ROA.Committees.Models
         public int? DivisionId { get; set; }
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
         public string? CommitteeCategoryName { get; set; }
         public string? DivisionName { get; set; }
         public string? DistrictName { get; set; }
         public string? ThanaName { get; set; }
+        public string? ZoneName { get; set; }
+        public string? MunicipalityName { get; set; }
+        public string? UnionName { get; set; }
+        public string? WardName { get; set; }
         public bool IsActive { get; set; }
         public int Id { get; set; }
         public int CommitteeYear { get; set; }
@@ -71,7 +79,15 @@ namespace ResApp.Application.ROA.Committees.Models
         public string CommitteeDate { get; set; } = string.Empty;
         public string CommitteeType { get; set; } = string.Empty;
         public string CommitteeCategoryName { get; set; } = string.Empty;
-        public string CommitteeYear { get; set; } = string.Empty;
+
+        public string? DivisionName { get; set; }
+        public string? DistrictName { get; set; }
+        public string? ThanaName { get; set; }
+        public string? ZoneName { get; set; }
+        public string? MunicipalityName { get; set; }
+        public string? UnionName { get; set; }
+        public string? WardName { get; set; }
+        public int CommitteeYear { get; set; }
     }
 
     public class ExportRoCommitteeDetail
@@ -98,6 +114,11 @@ namespace ResApp.Application.ROA.Committees.Models
         public int? DivisionId { get; set; }
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
+
+        public int? ZoneId { get; set; }
+        public int? MunicipalityId { get; set; }
+        public int? UnionInfoId { get; set; }
+        public int? WardId { get; set; }
 
 
     }

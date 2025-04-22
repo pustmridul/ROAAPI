@@ -95,6 +95,12 @@ namespace ResApp.Application.ROA.Committees.Commands
                 obj.DistrictId = request.Model.DistrictId == 0 ? null : request.Model.DistrictId ;
                 obj.ThanaId = request.Model.ThanaId == 0 ? null : request.Model.ThanaId ;
 
+                obj.ZoneId = request.Model.ZoneId == 0 ? null : request.Model.ZoneId;
+                obj.MunicipalityId = request.Model.MunicipalityId == 0 ? null : request.Model.MunicipalityId;
+                obj.UnionInfoId = request.Model.UnionInfoId == 0 ? null : request.Model.UnionInfoId;
+                obj.WardId = request.Model.WardId == 0 ? null : request.Model.WardId;
+
+
                 await _context.SaveChangesAsync(cancellation);
 
                 List<RoCommitteeDetail> details = new List<RoCommitteeDetail>();
