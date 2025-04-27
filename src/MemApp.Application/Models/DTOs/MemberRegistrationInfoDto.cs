@@ -23,8 +23,8 @@ namespace ResApp.Application.Models.DTOs
         public string? ApplicationNo { get; set; }
         public string? MemberShipNo { get; set; }
 
-        public decimal SubscriptionFee { get; set; }
-        public decimal MembershipFee { get; set; }
+        public decimal? SubscriptionFee { get; set; }
+        public decimal? MembershipFee { get; set; }
 
         public string? Name { get; set; }
         //public string? FatherName { get; set; }

@@ -329,7 +329,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                     }
                     memberReg.ApplicationNo = request.ApplicationNo;
                 //  memberReg.MemberShipNo = GenerateMembershipNo();
-                    memberReg.MemberShipNo = await GenerateMembershipNoAsync();// lastmembershipNo;
+                    memberReg.MemberShipNo = lastmembershipNo; // await GenerateMembershipNoAsync();// lastmembershipNo;
                     memberReg.IsApproved = false;
                     memberReg.PermenantAddress = request.PermenantAddress;
                     memberReg.CreatedOn = DateTime.UtcNow;

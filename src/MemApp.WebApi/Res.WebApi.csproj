@@ -89,6 +89,10 @@
     <Content Update="wwwroot\RDLC\MemberReport.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\RDLC\RoSubCommitteeReport.rdlc">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\RDLC\SubscriptionDue.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

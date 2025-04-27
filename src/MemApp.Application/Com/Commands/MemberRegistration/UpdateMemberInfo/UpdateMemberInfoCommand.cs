@@ -438,14 +438,14 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                     if(checkUserExist.SubscriptionStarts ==null && checkUserExist.PaidTill ==null && request.SubscriptionStarts != null)
                     {
-                        checkUserExist.SubscriptionStarts = request.SubscriptionStarts;
-                        // Subtract one month to go to the previous month
-                        DateTime previousMonth = request.SubscriptionStarts.GetValueOrDefault().AddMonths(-1);
+                        //checkUserExist.SubscriptionStarts = request.SubscriptionStarts;
+                        //// Subtract one month to go to the previous month
+                        //DateTime previousMonth = request.SubscriptionStarts.GetValueOrDefault().AddMonths(-1);
 
-                        // Get the last day of that month
-                        int lastDay = DateTime.DaysInMonth(previousMonth.Year, previousMonth.Month);
-                        //var paidTill= request.SubscriptionStarts.AddMonths(-1);
-                        checkUserExist.PaidTill = new DateTime(previousMonth.Year, previousMonth.Month, lastDay);
+                        //// Get the last day of that month
+                        //int lastDay = DateTime.DaysInMonth(previousMonth.Year, previousMonth.Month);
+                        ////var paidTill= request.SubscriptionStarts.AddMonths(-1);
+                        //checkUserExist.PaidTill = new DateTime(previousMonth.Year, previousMonth.Month, lastDay);
 
 
                     }
@@ -482,11 +482,22 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                             {
                                 var contact = new MultipleOwner
                                 {
-                                    Name = item.Name,
-                                    Phone = item.Phone,
-                                    Email = item.Phone,
-                                    MemberId = checkUserExist.Id,
+                                    MemberId=checkUserExist.Id,
                                 };
+
+                                if(item.Name != "null" && item.Name !="undefined" )
+                                {
+                                    contact.Name = item.Name;
+                                }
+                                if (item.Email != "null" && item.Email != "undefined")
+                                {
+                                    contact.Email = item.Email;
+                                }
+                                if (item.Phone != "null" && item.Phone != "undefined")
+                                {
+                                    contact.Phone = item.Phone;
+                                }
+
                                 _context.MultipleOwners.Add(contact);
                             }
                             
@@ -499,18 +510,25 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                         _context.MultipleOwners.RemoveRange(toRemove);
                     }
+                    else
+                    {
+                        var existingOwners = await _context.MultipleOwners
+                                            .Where(x => x.MemberId == checkUserExist.Id)
+                                            .ToListAsync(cancellationToken);
+                        _context.MultipleOwners.RemoveRange(existingOwners);
+                    }
 
 
                     if (await _context.SaveChangesAsync(cancellationToken) > 0)
                     {
-                        var checkExist = _context.RoSubscriptionDueTemps
-                                        .AsNoTracking()
-                                        .Any(x => x.MemberId == checkUserExist.Id);
-                        if (!checkExist)
-                        {
+                        //var checkExist = _context.RoSubscriptionDueTemps
+                        //                .AsNoTracking()
+                        //                .Any(x => x.MemberId == checkUserExist.Id);
+                        //if (!checkExist)
+                        //{
 
-                            await _mediator.Send(new RSubscriptionDueByMemberCommand() { MemberId = checkUserExist.Id });
-                        }
+                        //    await _mediator.Send(new RSubscriptionDueByMemberCommand() { MemberId = checkUserExist.Id });
+                        //}
                      
                         result.HasError = false;
                         result.Messages.Add("Member Registration Updated successfully!!");

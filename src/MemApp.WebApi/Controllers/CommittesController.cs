@@ -125,10 +125,14 @@ namespace Res.WebApi.Controllers
 
                 var masterDataTable = new DataTable();
                 masterDataTable.Columns.Add("Title");
+                masterDataTable.Columns.Add("CommitteeType");
+                masterDataTable.Columns.Add("CommitteeCategoryName");
                 masterDataTable.Columns.Add("CommitteeDate");
                 masterDataTable.Columns.Add("CommitteeYear");
-              //  masterDataTable.Columns.Add("TotalPaymentAmount");
-             //   masterDataTable.Columns.Add("SubscriptionDetails");
+                masterDataTable.Columns.Add("DivisionName");
+                masterDataTable.Columns.Add("DistrictName");
+                masterDataTable.Columns.Add("ThanaName");
+                masterDataTable.Columns.Add("ZoneName");
 
                 DataRow masterRow;
                 masterRow = masterDataTable.NewRow();
@@ -137,10 +141,14 @@ namespace Res.WebApi.Controllers
 
 
                 masterRow["Title"] = result.Title;
+                masterRow["CommitteeType"] = result.CommitteeType;
+                masterRow["CommitteeCategoryName"] = result.CommitteeCategoryName;
                 masterRow["CommitteeDate"] = result.CommitteeDate;
                 masterRow["CommitteeYear"] = result.CommitteeYear;
-              //  masterRow["TotalPaymentAmount"] = result.TotalPaymentAmount;
-              //  masterRow["SubscriptionDetails"] = result.Data.SubscriptionDetails;
+                masterRow["DivisionName"] = result.DivisionName;
+                masterRow["DistrictName"] = result.DistrictName;
+                masterRow["ZoneName"] = result.ZoneName;
+                masterRow["ThanaName"] = result.ThanaName;
 
 
 
@@ -182,7 +190,7 @@ namespace Res.WebApi.Controllers
                     { "ds", dataTable },
                     { "master", masterDataTable }
                 };
-                var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "RoExecutiveCommitteeReport" + ".rdlc";
+                var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "RoSubCommitteeReport" + ".rdlc";
 
                 ReportDomain reportDomain = new("PDF", data, path, null!);
                 return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + "PDF");

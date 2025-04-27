@@ -46,6 +46,7 @@ namespace ResApp.Application.ROA.Committees.Queries
             else
             {
                 result.Title = data.Title;
+                result.CommitteeType = data.CommitteeType;
                 result.CommitteeYear = data.CommitteeYear;
 
                 result.CommitteeDate = data.CommitteeDate.ToString("yyyy-mm-dd");

@@ -126,7 +126,7 @@ namespace ResApp.Application.ROA.Union.Command
                         return result;
                     }
 
-                    var checkUnionExist = await _context.ZoneInfos
+                    var checkUnionExist = await _context.UnionInfos
                        .FirstOrDefaultAsync(q => q.EnglishName == request.EnglishName || q.BanglaName == request.BanglaName, cancellationToken: cancellationToken);
 
                     if (checkUnionExist != null)

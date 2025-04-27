@@ -91,6 +91,7 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Model
         public string? cus_country { get; set; }
         public string? cus_phone { get; set; }
         public int MemberId { get; set; }
+        public string? PaymentFor {  get; set; }
 
         public List<MemberPaymentReqSSl>? SubscriptionDetails { get; set; }
     }

@@ -4,16 +4,15 @@ using MemApp.Application.Exceptions;
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces;
 using MemApp.Application.Interfaces.Contexts;
-using MemApp.Application.Models.DTOs;
 using MemApp.Application.PaymentGateway.SslCommerz.Model;
 using MemApp.Domain.Entities.com;
-using MemApp.Domain.Entities.mem;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Res.Domain.Entities;
 using ResApp.Application.Com.Commands.ROAPayment;
 using ResApp.Application.Com.Commands.ROAPayment.Models;
-using ResApp.Application.Com.Commands.RoTopUp;
+using ResApp.Application.ROA.MembershipFee.Command;
+using ResApp.Application.ROA.MembershipFee.Models;
 
 namespace MemApp.Application.PaymentGateway.SslCommerz.Command
 {
@@ -68,16 +67,35 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                         tobj.IsActive = true;
                         tobj.Status = "Confirm";
                         tobj.PaymentMode = request.Model.card_brand;
-                        var paidMonths = JsonConvert.DeserializeObject<List<PaymentTracking>>(tobj.MonthDetails!)?
+                        if (tobj.PaymentFor == "Membership Fee")
+                        {
+                            var paymentMembershipFee = await _mediator.Send(new RoMembershipFeePaymentCommand()
+                            {
+                                Model = new MembershipFeePayReq
+                                {
+                                    Amount=tobj.TotalAmount,
+                                    MemberId = tobj.MemberId,
+                                },
+                                IsOnline=true
+                                
+                            });
+                            paymentNo = paymentMembershipFee.Data.PaymentNo;
+                        }
+                        var paidMonths = new List<PaymentTracking>();
+                        if (tobj.PaymentFor == "Subscription Fee")
+                        {
+                             paidMonths = JsonConvert.DeserializeObject<List<PaymentTracking>>(tobj.MonthDetails!)?
                                                         .OrderBy(x => x.SubscriptionMonth)
                                                         .ToList() ?? new List<PaymentTracking>();
 
-                        var payment = await _mediator.Send(new ROPaymentOnlineCommand() 
-                        { 
-                            Model = paidMonths!,
-                            MemberId=tobj.MemberId
-                        });
-                       paymentNo= payment.Data.PaymentNo;
+                            var payment = await _mediator.Send(new ROPaymentOnlineCommand()
+                            {
+                                Model = paidMonths!,
+                                MemberId = tobj.MemberId
+                            });
+                            paymentNo = payment.Data.PaymentNo;
+                        }
+                            
                        
                         foreach (var d in tobj.TopUpDetails)
                         {
@@ -88,7 +106,7 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
 
                             string preFix = "T";
                             var topUpNo = "";
-                            var max = _context.MemLedgers.Where(q => q.TOPUPID.StartsWith(preFix))
+                            var max = _context.RoMemberLedgers.Where(q => q.TOPUPID.StartsWith(preFix))
                                 .Select(s => s.TOPUPID.Replace(preFix, "")).DefaultIfEmpty().Max();
 
                             if (string.IsNullOrEmpty(max))
@@ -106,8 +124,8 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                                 Amount = Math.Round(d.Amount),
                                 //  Description = "TOP UP By : Member Ship No :" + tobj.MemberShipNo + ", Card No : " + tobj.CardNo,
                                 // Description = "Subscription Bill By : Member Ship No :" + tobj.MemberShipNo ,
-                                Description = "Subscription fee Details : " + paidMonths.Count + " Months, " + paidMonths.FirstOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy") + " To  " +
-                                                           paidMonths.LastOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy"),
+                                //Description = "Subscription fee Details : " + paidMonths.Count + " Months, " + paidMonths.FirstOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy") + " To  " +
+                                //                           paidMonths.LastOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy"),
                                 Dates = DateTime.Now,
                                 TOPUPID = topUpNo,
                                 UpdateBy = tobj.CreatedByName,
@@ -117,14 +135,29 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                                 BankCreditCardName = d.BankText,
                                 ChequeCardNo = d.PaymentMethodText,
                                // Notes = "TOPUP : TopUpId :" + d.Id + " Transaction Id : " + tobj.Note,
-                                Notes= "Subscription fee Details : " + paidMonths.Count + " Months, " + paidMonths.FirstOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy") + " To  " +
-                                                           paidMonths.LastOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy"),
+                                //Notes= "Subscription fee Details : " + paidMonths.Count + " Months, " + paidMonths.FirstOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy") + " To  " +
+                                //                           paidMonths.LastOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy"),
                                 ServiceChargeAmount = 0,
                                 RefundId = "",
                                 TransactionType = "TOPUP",
                                 TransactionFrom = "MOBILEAPP",
                                 TopUpDetailId = d.Id,
                             };
+
+                            if (tobj.PaymentFor == "Membership Fee")
+                            {
+                                lObj.Description = "Membership Fee";
+                                lObj.Notes = "Membership Fee";
+                            }
+
+                            if (tobj.PaymentFor == "Subscription Fee")
+                            {
+                                lObj.Description = "Subscription fee Details : " + paidMonths.Count + " Months, " + paidMonths.FirstOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy") + " To  " +
+                                                           paidMonths.LastOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy");
+                                lObj.Notes = "Subscription fee Details : " + paidMonths.Count + " Months, " + paidMonths.FirstOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy") + " To  " +
+                                                           paidMonths.LastOrDefault()!.SubscriptionMonth.ToString("MMMM, yyyy");
+                            }
+
                             ledgers.Add(lObj);
                             _context.RoMemberLedgers.AddRange(ledgers);
                         }

@@ -99,30 +99,14 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                     return result;
                 }
 
-                var verify = new SubscriptionDetailsVerify(_context);
-                if( !verify.MonthVerify(request.Model.MemberId, request.Model.SubscriptionDetails!))
+                if (string.IsNullOrEmpty(request.Model.PaymentFor!.Trim()))
                 {
                     result.HasError = true;
-                    result.Messages?.Add("This month fee has already paid!!");
-                    return result;
-                }
-                var checkedList = request.Model.SubscriptionDetails!.Where(q => q.IsChecked).OrderBy(o => o.SubscriptionMonth).ToList();
-
-                if (checkedList.Sum(x => x.PaymentAmount+x.LateAmount) != request.Model.total_amount)
-                {
-                    result.HasError = true;
-                    result.Messages?.Add("Wrong amount!");
+                    result.Messages?.Add("Please specify the Fee");
                     return result;
                 }
 
-                string months = string.Join(", ", checkedList.Select(p => p.SubscriptionMonth.ToString("yyyy-MM-dd")));
-
-                var monthDetails = checkedList.Select(x => new PaymentTracking
-                {
-                    SubscriptionMonth = x.SubscriptionMonth,
-                    PaymentAmount = x.PaymentAmount,
-                    LateAmount = x.LateAmount,
-                }).ToList();
+                
 
                 if (memberObj != null)
                 {
@@ -151,7 +135,56 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                     obj.Note = GenerateUniqueId() +request.Model.MemberId;
                     obj.PaymentMode = "Online";
                     // obj.MonthDetails = months;
+                  
+
+                if (request.Model.PaymentFor!.Trim() == "Subscription Fee")
+                {
+                    var verify = new SubscriptionDetailsVerify(_context);
+                    if (!verify.MonthVerify(request.Model.MemberId, request.Model.SubscriptionDetails!))
+                    {
+                        result.HasError = true;
+                        result.Messages?.Add("This month fee has already paid!!");
+                        return result;
+                    }
+                    var checkedList = request.Model.SubscriptionDetails!.Where(q => q.IsChecked).OrderBy(o => o.SubscriptionMonth).ToList();
+
+                    if (checkedList.Sum(x => x.PaymentAmount + x.LateAmount) != request.Model.total_amount)
+                    {
+                        result.HasError = true;
+                        result.Messages?.Add("Wrong amount!");
+                        return result;
+                    }
+
+                    string months = string.Join(", ", checkedList.Select(p => p.SubscriptionMonth.ToString("yyyy-MM-dd")));
+
+                    var monthDetails = checkedList.Select(x => new PaymentTracking
+                    {
+                        SubscriptionMonth = x.SubscriptionMonth,
+                        PaymentAmount = x.PaymentAmount,
+                        LateAmount = x.LateAmount,
+                    }).ToList();
                     obj.MonthDetails = JsonConvert.SerializeObject(monthDetails); // Convert to JSON
+                    obj.PaymentFor = "Subscription Fee";
+                }
+
+                else if (request.Model.PaymentFor!.Trim() == "Membership Fee")
+                {
+                    var exist = _context.ROAMembershipFeePayments.Any(x => x.MemberId == request.Model.MemberId);
+                    if (exist)
+                    {
+                        result.HasError = true;
+                        result.Messages?.Add("Member Fee has been paid already!!");
+                        return result;
+                    }
+                    obj.PaymentFor = "Membership Fee";
+                }
+
+                else
+                {
+                    result.HasError = true;
+                    result.Messages?.Add("Please specify the Fee");
+                    return result;
+                }
 
 
                 if (await _context.SaveChangesAsync(cancellation) > 0)

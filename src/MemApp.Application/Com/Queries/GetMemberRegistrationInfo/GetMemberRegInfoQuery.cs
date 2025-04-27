@@ -52,6 +52,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                 {
                     Id = data.Id,
                     ApplicationNo = data.ApplicationNo,
+                    Email=data.Email,
                     MemberShipNo=data.MemberShipNo,
                     PermenantAddress = data.PermenantAddress,
                     IsApproved = data.IsApproved,

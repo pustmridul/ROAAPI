@@ -82,7 +82,7 @@ namespace MemApp.WebApi.Controllers.v1
                 return BadRequest();
             }
              var paymentNo= result.Messages[1].ToString();
-            // var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
+           //  var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
             var redirectUrl = $"http://36.255.71.72:177/member_topup/" + paymentNo;
             // $"?paymentNo={paymentNo}";
             Response.Headers["Location"] = redirectUrl;

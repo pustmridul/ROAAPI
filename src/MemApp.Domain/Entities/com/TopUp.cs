@@ -29,6 +29,7 @@ namespace MemApp.Domain.Entities.com
         public bool OnlineTopUp { get; set; }
 
         public string? MonthDetails { get; set; }
+        public string? PaymentFor { get; set; }
 
 
         public ICollection<TopUpDetail> TopUpDetails { get; set; }
