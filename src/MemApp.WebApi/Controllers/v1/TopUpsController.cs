@@ -82,8 +82,9 @@ namespace MemApp.WebApi.Controllers.v1
                 return BadRequest();
             }
              var paymentNo= result.Messages[1].ToString();
-           //  var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
-            var redirectUrl = $"http://36.255.71.72:177/member_topup/" + paymentNo;
+             var paymentFor= result.Messages[2].ToString();
+            //  var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
+            var redirectUrl = $"http://36.255.71.72:177/member_topup?paymentNo={paymentNo}&paymentFor={paymentFor}";
             // $"?paymentNo={paymentNo}";
             Response.Headers["Location"] = redirectUrl;
             return StatusCode(302);  // This forces a direct redirect
@@ -135,8 +136,10 @@ namespace MemApp.WebApi.Controllers.v1
             }
 
               var paymentNo = result.Messages[1].ToString();
+              var paymentFor = result.Messages[2].ToString();
             // var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
-            var redirectUrl = $"http://36.255.71.72:177/member_topup/" + paymentNo;
+            var redirectUrl = $"http://36.255.71.72:177/member_topup?paymentNo={paymentNo}&paymentFor={paymentFor}";
+
             // $"?paymentNo={paymentNo}";
 
             return Redirect(redirectUrl);

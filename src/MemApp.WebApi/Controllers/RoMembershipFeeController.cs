@@ -6,6 +6,7 @@ using System.Data;
 using ResApp.Application.ROA.MembershipFee.Models;
 using ResApp.Application.ROA.MembershipFee.Command;
 using ResApp.Application.ROA.MembershipFee.Queries;
+using ResApp.Application.ROA.SubscriptionPayment.Queries;
 
 namespace Res.WebApi.Controllers
 {
@@ -37,6 +38,21 @@ namespace Res.WebApi.Controllers
         {
 
             var result = await Mediator.Send(new GetPaidByROMemberIdQuery() { MemberId = MemberId });
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetAllPaymentList(DateTime startDate, DateTime endDate, string? memberShipNo, int pageNo, int pageSize)
+        {
+            var result = await Mediator.Send(new GetAllMembershipFeePaymentQuery()
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                MemberShipNo = memberShipNo == "null" ? null : memberShipNo,
+                PageNo = pageNo,
+                PageSize = pageSize
+            });
             return Ok(result);
         }
 

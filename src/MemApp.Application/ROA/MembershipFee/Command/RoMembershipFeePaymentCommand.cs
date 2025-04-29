@@ -4,7 +4,7 @@ using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces.Contexts;
 using MemApp.Application.Interfaces;
 using Res.Domain.Entities.ROAPayment;
-using ResApp.Application.Com.Commands.ROAPayment.Models;
+using ResApp.Application.ROA.SubscriptionPayment.Models;
 using ResApp.Application.Com.Commands.RoTopUp;
 using System;
 using System.Collections.Generic;

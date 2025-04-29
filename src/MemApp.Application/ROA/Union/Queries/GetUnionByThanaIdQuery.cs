@@ -57,7 +57,8 @@ namespace ResApp.Application.ROA.Union.Queries
                     BanglaName = s.BanglaName,
                     ThanaName=s?.Thana?.EnglishName,
                     DistrictName=s?.Thana?.District?.EnglishName,
-                    ThanaId = s.ThanaId.GetValueOrDefault(),
+                    ThanaId = s!.ThanaId.GetValueOrDefault(),
+                    DistrictId=s!.Thana!.DistrictId.GetValueOrDefault()
                 }).ToList();
             }
 

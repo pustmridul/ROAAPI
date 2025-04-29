@@ -8,7 +8,7 @@ using MemApp.Domain.Entities.com;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using ResApp.Application.Com.Commands.ROAPayment.Models;
+using ResApp.Application.ROA.SubscriptionPayment.Models;
 using ResApp.Application.Com.Commands.RoaSubscriptionVerify;
 using System;
 using System.Collections.Generic;
@@ -139,6 +139,13 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
 
                 if (request.Model.PaymentFor!.Trim() == "Subscription Fee")
                 {
+                    var exist = _context.ROAMembershipFeePayments.Any(x => x.MemberId == request.Model.MemberId);
+                    if (!exist)
+                    {
+                        result.HasError = true;
+                        result.Messages?.Add("Please pay the membership fee first!!");
+                        return result;
+                    }
                     var verify = new SubscriptionDetailsVerify(_context);
                     if (!verify.MonthVerify(request.Model.MemberId, request.Model.SubscriptionDetails!))
                     {

@@ -3,7 +3,7 @@ using MediatR;
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces.Contexts;
 using Microsoft.EntityFrameworkCore;
-using ResApp.Application.Com.Commands.ROAPayment.Models;
+using ResApp.Application.ROA.SubscriptionPayment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

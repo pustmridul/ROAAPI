@@ -1,7 +1,7 @@
 ﻿using MemApp.Application.Extensions;
 using MemApp.Application.Models;
 using Microsoft.AspNetCore.Http;
-using ResApp.Application.Com.Commands.ROAPayment.Models;
+using ResApp.Application.ROA.SubscriptionPayment.Models;
 using System.Text.Json.Serialization;
 
 namespace MemApp.Application.PaymentGateway.SslCommerz.Model

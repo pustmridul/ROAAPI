@@ -33,7 +33,7 @@ namespace ResApp.Application.ROA.MemberRegistration
         {
             var result = new ListResult<MemberRegistrationInfoDto>();
             string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
-            string membershipNo = !string.IsNullOrEmpty(request.MemberShipNo) ? request.MemberShipNo.PadLeft(5, '0') : "";
+            string membershipNo = !string.IsNullOrEmpty(request.MemberShipNo) ? request.MemberShipNo.PadLeft(8, '0') : "";
             var list = await _context.MemberRegistrationInfos.
                 Where(x => x.MemberShipNo!.Contains( request.MemberShipNo) && x.IsApproved).ToListAsync(cancellationToken);
 

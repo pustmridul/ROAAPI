@@ -57,6 +57,7 @@ namespace ResApp.Application.Com.Queries.GetDivisionQuery
                     DistrictName=s.District?.EnglishName,
                     DistrictBanglaName=s.District?.BanglaName,
                     ZoneName=s.Zone?.EnglishName,
+                    UnionCount = _context.UnionInfos.Count(u => u.ThanaId == s.Id)
                 }).ToList();
             }
 

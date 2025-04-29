@@ -7,8 +7,8 @@ namespace MemApp.Domain.Entities.com
     {
         public string Code { get; set; } = string.Empty;
         public string Title { get; set; }=string.Empty;
-        public ICollection<RegisterMember> RegisterMembers { get; set; }
-        public ICollection<MemberTemp> MemberTemps { get; set; }
+        public ICollection<RegisterMember>? RegisterMembers { get; set; }
+        public ICollection<MemberTemp>? MemberTemps { get; set; }
 
     }
 }

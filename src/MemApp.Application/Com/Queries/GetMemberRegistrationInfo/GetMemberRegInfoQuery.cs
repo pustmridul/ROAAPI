@@ -93,6 +93,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     MembershipFee =data.MembershipFee.GetValueOrDefault(),
                     SubscriptionStarts=data.SubscriptionStarts,
                     PaidTill=data.PaidTill,
+                    MemberFeePaid = await _context.ROAMembershipFeePayments.AnyAsync(x => x.MemberId == data.Id, cancellationToken: cancellationToken),
                     ContactDetailReq = data.MultipleOwners?.Select(s => new ContactDetailReq
                     {
                         Id = s.Id,

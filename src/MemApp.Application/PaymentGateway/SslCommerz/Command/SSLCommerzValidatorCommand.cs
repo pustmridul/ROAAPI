@@ -9,10 +9,10 @@ using MemApp.Domain.Entities.com;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Res.Domain.Entities;
-using ResApp.Application.Com.Commands.ROAPayment;
-using ResApp.Application.Com.Commands.ROAPayment.Models;
 using ResApp.Application.ROA.MembershipFee.Command;
 using ResApp.Application.ROA.MembershipFee.Models;
+using ResApp.Application.ROA.SubscriptionPayment.Command;
+using ResApp.Application.ROA.SubscriptionPayment.Models;
 
 namespace MemApp.Application.PaymentGateway.SslCommerz.Command
 {
@@ -255,6 +255,7 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                     result.HasError = false;
                     result.Messages?.Add("Save Success");
                     result.Messages?.Add(paymentNo);
+                    result.Messages?.Add(tobj.PaymentFor!);
                     return result;
                 }
                 else

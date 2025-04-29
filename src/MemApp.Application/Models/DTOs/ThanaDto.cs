@@ -16,6 +16,7 @@ namespace ResApp.Application.Models.DTOs
 
         public int? DistrictId { get; set; }
         public int? ZoneId { get; set; }
+        public int? UnionCount { get; set; }
 
         public string? DistrictName { get; set; }
         public string? DistrictBanglaName { get; set; }

@@ -16,6 +16,7 @@ namespace ResApp.Application.ROA.Union.Models
             public DateTime? CreatedOn { get; set; }
 
             public int ThanaId { get; set; }
+            public int DistrictId { get; set; }
 
             public string? ThanaName { get; set; }
             public string? DistrictName { get; set; }

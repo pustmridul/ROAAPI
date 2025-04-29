@@ -4,7 +4,7 @@ using MemApp.Application.Interfaces.Contexts;
 using MemApp.Application.Mem.Subscription.Model;
 using MemApp.Application.Mem.Subscription.Queries;
 using Microsoft.EntityFrameworkCore;
-using ResApp.Application.Com.Commands.ROAPayment.Models;
+using ResApp.Application.ROA.SubscriptionPayment.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
