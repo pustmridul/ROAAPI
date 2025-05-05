@@ -33,6 +33,7 @@ namespace MemApp.Application.Models.Requests
     {
         public bool IsChecked { get; set; }
         public string Name { get; set; } = string.Empty;  
+        public string Operation { get; set; } = string.Empty;  
         public int PermissionNo { get; set; }
     }
 }

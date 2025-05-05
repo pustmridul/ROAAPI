@@ -10,7 +10,7 @@ public class DistrictConfiguration : IEntityTypeConfiguration<District>
 {
     public void Configure(EntityTypeBuilder<District> builder)
     {
-        builder.ToTable("District");
+        builder.ToTable("District_bck");
         builder.HasKey(e => new { e.Id });
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(a => a.EnglishName).IsRequired().HasMaxLength(100);

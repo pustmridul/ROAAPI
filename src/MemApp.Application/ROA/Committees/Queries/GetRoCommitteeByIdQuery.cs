@@ -81,6 +81,10 @@ namespace ResApp.Application.ROA.Committees.Queries
                     DivisionName = data.DivisionId != null ? _context.Divisions.SingleOrDefault(x=>x.Id==data.DivisionId)!.EnglishName : "",
                     DistrictName = data.DistrictId != null ? _context.Districts.SingleOrDefault(x => x.Id == data.DistrictId)!.EnglishName : "",
                     ThanaName = data.ThanaId != null ? _context.Thanas.SingleOrDefault(x => x.Id == data.ThanaId)!.EnglishName : "",
+                    ZoneName = data.ZoneId != null ? _context.ZoneInfos.FirstOrDefault(x => x.Id == data.ZoneId)?.EnglishName : "",               
+                    MunicipalityName = data.MunicipalityId != null ? _context.Municipalities.FirstOrDefault(x => x.Id == data.MunicipalityId)?.EnglishName : "",
+                    UnionName = data.UnionInfoId != null ? _context.UnionInfos.FirstOrDefault(x => x.Id == data.UnionInfoId)?.EnglishName : "",
+                    WardName = data.WardId != null ? _context.Wards.FirstOrDefault(x => x.Id == data.WardId)?.EnglishName : "",
                     CommitteeDetails = data.CommitteeDetails.Select(s => new RoCommitteeDetailReq()
                     {
                         MemberName = s.MemberName,

@@ -10,7 +10,7 @@ public class ThanaConfiguration : IEntityTypeConfiguration<Thana>
 {
     public void Configure(EntityTypeBuilder<Thana> builder)
     {
-        builder.ToTable("Thana");
+        builder.ToTable("Thana_bck");
         builder.HasKey(e => new { e.Id });
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(a => a.EnglishName).IsRequired().HasMaxLength(100);

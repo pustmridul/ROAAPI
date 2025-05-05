@@ -16,6 +16,7 @@ using MemApp.Application.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.Com.Queries.GetCurrentUserDetails;
+using ResApp.Application.Com.Queries.GetUserById;
 
 namespace MemApp.WebApi.Controllers
 {
@@ -38,6 +39,17 @@ namespace MemApp.WebApi.Controllers
         public async Task<IActionResult> SaveUser(CreateUserCommand command)
         {
             return Ok(await Mediator.Send(command));
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetUserById(int userId = 0)
+        {
+            return Ok(await Mediator.Send(new GetUserByIdQuery()
+            {
+                UserId = userId
+            }));
         }
 
 

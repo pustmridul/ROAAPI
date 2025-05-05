@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MemApp.Application.Com.Queries.GetNavMenuByUserId;
+using MemApp.Application.Com.Queries.GetRolePermission;
 using MemApp.Application.Interfaces.Contexts;
 using MemApp.Application.Models.Requests;
 using MemApp.Domain.Entities.com;
@@ -88,31 +89,34 @@ namespace MemApp.Application.Com.Commands.SaveRolePermission
 
             foreach (var d in request.Model.PermissionList)
             {
-                if (d.IsChecked)
-                {
+             //   if (d.IsChecked)
+             //   {
                     var obj = await _context.RolePermissionMaps
-                        .SingleOrDefaultAsync(q => q.PermissionNo == d.PermissionNo
+                       // .FirstOrDefaultAsync(q => q.PermissionNo == d.PermissionNo
+                        .FirstOrDefaultAsync(q => q.PermissionNo == d.PermissionNo
                         && q.RoleId == request.Model.RoleId, cancellation);
                   
-                    if(obj == null)
-                    {
-                        obj = new RolePermissionMap()
-                        {
-                            RoleId = request.Model.RoleId,
-                            PermissionNo = d.PermissionNo,
-                            IsActive = true
-                        };
-                        rolePermission.Add(obj);
-                    }         
-                    else
-                    {
-                        obj.IsActive = d.IsChecked;                     
-                    }
+                    //if(obj == null)
+                    //{
+                    //    obj = new RolePermissionMap()
+                    //    {
+                    //        RoleId = request.Model.RoleId,
+                    //        PermissionNo = d.PermissionNo,
+                    //        IsActive = true
+                    //    };
+                    //    rolePermission.Add(obj);
+                    //}         
+                    //else
+                    //{
+                    //    obj.IsActive = d.IsChecked;                     
+                    //}
                     foreach(var d1 in d.PermissionDetailVms)
                     {
-                        var objChild = await _context.RolePermissionMaps.SingleOrDefaultAsync(q=>q.RoleId== request.Model.RoleId 
-                        && q.PermissionNo== d1.PermissionNo, cancellation);
-                        if(objChild == null)
+                    if(d1.IsChecked)
+                    {
+                        var objChild = await _context.RolePermissionMaps.SingleOrDefaultAsync(q => q.RoleId == request.Model.RoleId
+                        && q.PermissionNo == d1.PermissionNo, cancellation);
+                        if (objChild == null)
                         {
                             objChild = new RolePermissionMap()
                             {
@@ -127,29 +131,41 @@ namespace MemApp.Application.Com.Commands.SaveRolePermission
                             objChild.IsActive = d1.IsChecked;
                         }
                     }
-                }
-                else
-                {
-                    var obj2 = await _context.RolePermissionMaps
-                        .SingleOrDefaultAsync(q => q.PermissionNo == d.PermissionNo && q.RoleId == request.Model.RoleId, cancellation);
-                    if (obj2 != null)
+                    else
                     {
-                        obj2.IsActive = false;
-
-                        foreach (var d1 in d.PermissionDetailVms)
+                        var objChild = await _context.RolePermissionMaps.SingleOrDefaultAsync(q => q.RoleId == request.Model.RoleId
+                        && q.PermissionNo == d1.PermissionNo, cancellation);
+                        if (objChild != null)
                         {
-
-                            var objChild2 = await _context.RolePermissionMaps.SingleOrDefaultAsync(q => q.PermissionNo == d1.PermissionNo
-                            && q.RoleId == request.Model.RoleId, cancellation);
-
-                            if (objChild2!=null)
-                            {
-                                objChild2.IsActive = false;
-                            }
+                            objChild.IsActive = d1.IsChecked;
                         }
+                        
                     }
+                        
+                    }
+              //  }
+                //else
+                //{
+                //  //  var obj2 = await _context.RolePermissionMaps
+                //   //     .FirstOrDefaultAsync(q => q.PermissionNo == d.PermissionNo && q.RoleId == request.Model.RoleId, cancellation);
+                // //   if (obj2 != null)
+                // //   {
+                //     //   obj2.IsActive = false;
+
+                //        foreach (var d1 in d.PermissionDetailVms)
+                //        {
+
+                //            var objChild2 = await _context.RolePermissionMaps.FirstOrDefaultAsync(q => q.PermissionNo == d1.PermissionNo
+                //            && q.RoleId == request.Model.RoleId, cancellation);
+
+                //            if (objChild2!=null)
+                //            {
+                //                objChild2.IsActive = false;
+                //            }
+                //        }
+                // //   }
                     
-                }
+                //}
 
             }
 

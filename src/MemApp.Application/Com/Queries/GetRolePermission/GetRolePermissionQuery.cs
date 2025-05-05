@@ -1,10 +1,15 @@
-﻿using MediatR;
+﻿using Dapper;
+using MediatR;
 using MemApp.Application.Interfaces.Contexts;
+using MemApp.Application.Mem.Attendances.Model;
 using MemApp.Application.Models;
 using MemApp.Application.Models.Requests;
+using MemApp.Application.Services;
+using MemApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
-namespace MemApp.Application.Com.Queries.GetNavMenuByUserId
+namespace MemApp.Application.Com.Queries.GetRolePermission
 {
     public class GetRolePermissionQuery : IRequest<RolePermissionRes>
     {
@@ -14,23 +19,87 @@ namespace MemApp.Application.Com.Queries.GetNavMenuByUserId
     public class GetRolePermissionQueryHandler : IRequestHandler<GetRolePermissionQuery, RolePermissionRes>
     {
         private readonly IMemDbContext _context;
+        private readonly IDapperContext _dapperContext;
 
-        public GetRolePermissionQueryHandler(IMemDbContext context)
+        public GetRolePermissionQueryHandler(IMemDbContext context, IDapperContext dapperContext)
         {
             _context = context;
+            _dapperContext = dapperContext;
         }
 
         public async Task<RolePermissionRes> Handle(GetRolePermissionQuery request, CancellationToken cancellationToken)
         {
             var result = new RolePermissionRes();
 
-            var role = await _context.Roles.SingleOrDefaultAsync(q => q.Id == request.RoleId, cancellationToken);
+            var role = await _context.Roles.FirstOrDefaultAsync(q => q.Id == request.RoleId, cancellationToken);
             if (role == null)
             {
                 result.HasError = true;
                 result.Messages.Add("Role Id NotFound");
             }
-            var rolePermission = await _context.RolePermissionMaps.Where(q => q.RoleId == role.Id && q.IsActive).Select(s => s.PermissionNo).ToListAsync(cancellationToken);
+
+           // var permissions = await _context.Permissions.Where(x=>x.IsActive).ToListAsync(cancellationToken);
+            var rolePermission = await _context.RolePermissionMaps.Where(q => q.RoleId == role!.Id && q.IsActive).Select(s => s.PermissionNo).ToListAsync(cancellationToken);
+
+            var permissions = new List<PermissionDetailVm>();
+
+            try
+            {
+                using (var connection = _dapperContext.CreateConnection())
+                {
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("select * from VW_DailyAttendance ");
+
+                    string sql = @"
+                            SELECT 
+                                p.ModuleName Name,
+                                p.OperationName Operation,
+                                p.PermissionNo,
+                                CASE WHEN rpm.PermissionNo IS NOT NULL THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END AS IsChecked
+                            FROM Permissions p
+                            LEFT JOIN com_RolePermissionMap rpm 
+                                ON rpm.PermissionNo = p.PermissionNo 
+                                AND rpm.RoleId = @RoleId 
+                                AND rpm.IsActive = 1
+                            WHERE p.IsActive = 1
+                            ORDER BY p.ModuleName, p.PermissionNo;";
+
+                    var existPermission = await connection
+                        .QueryAsync<PermissionDetailVm>(sql, new { RoleId = request.RoleId });
+                    permissions = existPermission.ToList();
+
+                }
+
+                var permissionList = permissions
+                                    .GroupBy(p => p.Name)
+                                    .Select(group => new PermissionVm
+                                    {
+                                        Title = group.Key,
+                                        PermissionNo = 0, // or assign a group-level PermissionNo if needed
+                                        IsChecked = group.Any(x => x.IsChecked),
+                                        PermissionDetailVms = group.Select(x => new PermissionDetailVm
+                                        {
+                                            Name = x.Name,
+                                            Operation = x.Operation,
+                                            PermissionNo = x.PermissionNo,
+                                            IsChecked = x.IsChecked
+                                        }).ToList()
+                                    }).ToList();
+
+                result.PermissionList = permissionList;
+
+                result.RoleId = role!.Id;
+                result.Name = role.Name;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return result;
+
+
 
 
             var user = new PermissionVm()

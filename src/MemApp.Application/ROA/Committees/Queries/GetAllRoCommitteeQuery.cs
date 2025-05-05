@@ -13,6 +13,7 @@ using ResApp.Application.Models.DTOs;
 using MemApp.Application.Mem.Committees.Models;
 using MemApp.Domain.Entities.mem;
 using Res.Domain.Entities.RoaCommittee;
+using Microsoft.AspNetCore.Http;
 
 namespace ResApp.Application.ROA.Committees.Queries
 {
@@ -27,11 +28,14 @@ namespace ResApp.Application.ROA.Committees.Queries
     public class GetAllCommitteeQueryHandler : IRequestHandler<GetAllRoCommitteeQuery, ListResult<RoCommitteeReq>>
     {
         private readonly IMemDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         //private readonly IUserLogService _userLogService;
         //private readonly ICurrentUserService _currentUserService;
-        public GetAllCommitteeQueryHandler(IMemDbContext context, ICurrentUserService currentUserService, IUserLogService userLogService)
+        public GetAllCommitteeQueryHandler(IMemDbContext context, ICurrentUserService currentUserService,
+                                            IHttpContextAccessor httpContextAccessor,IUserLogService userLogService)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             //_currentUserService = currentUserService;
             //_userLogService = userLogService;
         }
@@ -39,6 +43,7 @@ namespace ResApp.Application.ROA.Committees.Queries
         public async Task<ListResult<RoCommitteeReq>> Handle(GetAllRoCommitteeQuery request, CancellationToken cancellationToken)
         {
             // var result = new CommitteeVm();
+            string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
             var result = new ListResult<RoCommitteeReq>()
             {
                 Data=new List<RoCommitteeReq>()
@@ -84,7 +89,7 @@ namespace ResApp.Application.ROA.Committees.Queries
                             MemberName = s.MemberName,
                             CommitteeId = s.Id,
                             Email = s.Email,
-                            ImgFileUrl = s.ImgFileUrl,
+                            ImgFileUrl = s.ImgFileUrl == null ? baseUrl + "/uploadsMembers/test.png" : baseUrl + "/uploadsMembers/" + s.ImgFileUrl,
                             Phone = s.Phone,
                             Designation = s.Designation,
                             MembershipNo = s.MembershipNo,
@@ -119,7 +124,12 @@ namespace ResApp.Application.ROA.Committees.Queries
                     {
                         query = query.Where(x => x.CommitteeYear == request.Model.Year);
                     }
-                    if(request.Model.DivisionId != null || request.Model.DistrictId != null || request.Model.ZoneId != null
+
+                    if (request.Model.CategoryId > 0)
+                    {
+                        query = query.Where(x => x.CommitteeCategoryId == request.Model.CategoryId);
+                    }
+                    if (request.Model.DivisionId != null || request.Model.DistrictId != null || request.Model.ZoneId != null
                         || request.Model.ThanaId != null || request.Model.MunicipalityId != null || request.Model.UnionInfoId != null || request.Model.WardId != null)
                     {
                         query = query.Where(x => x.DivisionId == request.Model.DivisionId && x.DistrictId == request.Model.DistrictId
@@ -222,7 +232,7 @@ namespace ResApp.Application.ROA.Committees.Queries
                             MemberName = s.MemberName,
                             CommitteeId = s.Id,
                             Email = s.Email,
-                            ImgFileUrl = s.ImgFileUrl,
+                            ImgFileUrl = s.ImgFileUrl == null ? baseUrl + "/uploadsMembers/test.png" : baseUrl + "/uploadsMembers/" + s.ImgFileUrl,
                             Phone = s.Phone,
                             Designation = s.Designation,
                             MembershipNo = s.MembershipNo,

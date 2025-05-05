@@ -1,14 +1,7 @@
 ﻿using MediatR;
-using MemApp.Application.Mem.MemberTypes.Queries;
 using MemApp.Reporting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Res.Domain.Entities;
-using ResApp.Application.Com.Commands.MemberRegistration;
-using ResApp.Application.Com.Commands.UpdateThana;
-using ResApp.Application.Com.Queries.GetMemberRegistrationInfo;
-using ResApp.Application.Com.Queries.ROSubcriptionPaymentReport;
-using ResApp.Application.Models.DTOs;
 using ResApp.Application.ROA.CommitteeCategory.Command;
 using ResApp.Application.ROA.CommitteeCategory.Queries;
 using ResApp.Application.ROA.Committees.Commands;

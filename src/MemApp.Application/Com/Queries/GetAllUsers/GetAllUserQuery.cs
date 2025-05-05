@@ -27,11 +27,11 @@ namespace MemApp.Application.Com.Queries.GetAllUsers
         {
             var result = new ListResult<UserDto>();
             var data = await _context.Users.Where(q=>q.IsActive && q.AppId==request.AppId 
-            && (!string.IsNullOrEmpty(request.SearchText)?q.UserName.ToLower().Contains(request.SearchText.ToLower()) :true)).OrderByDescending(o=>o.Id)
+            && (!string.IsNullOrEmpty(request.SearchText)?q.UserName!.ToLower().Contains(request.SearchText.ToLower()) :true)).OrderByDescending(o=>o.Id)
                 .ToPaginatedListAsync(request.PageNo, request.PageSize, cancellationToken);
 
             var dataCount = await _context.Users.Where(q => q.IsActive && q.AppId == request.AppId
-            &&  (!string.IsNullOrEmpty(request.SearchText) ? q.UserName.ToLower().Contains(request.SearchText.ToLower()) : true)).CountAsync(cancellationToken);
+            &&  (!string.IsNullOrEmpty(request.SearchText) ? q.UserName!.ToLower().Contains(request.SearchText.ToLower()) : true)).CountAsync(cancellationToken);
 
             if (data.TotalCount == 0)
             {
@@ -41,13 +41,13 @@ namespace MemApp.Application.Com.Queries.GetAllUsers
             else
             {
                 result.HasError = false;
-                result.Count = dataCount;
+                result.Count = data.TotalCount; // dataCount;
                 result.Data = data.Data.Select(s => new UserDto
                 {
                     Id = s.Id,
-                    UserName = s.UserName,
+                    UserName = s.UserName!,
                     Name = s.Name??"",
-                    PhoneNo= s.PhoneNo,
+                    PhoneNo= s.PhoneNo!,
                     EmailId = s.EmailId ?? ""
                 }).ToList();
             }

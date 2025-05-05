@@ -2,9 +2,7 @@
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces;
 using MemApp.Application.Interfaces.Contexts;
-using MemApp.Application.Mem.Members.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using ResApp.Application.Models.DTOs;
 
 namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
@@ -38,12 +36,12 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
 
             string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
 
-            if (checkAdmin != "Super Admin")
-            {
-                result.HasError = true;
-                result.Messages.Add("Invalid request!!!");
-                return result;
-            }
+            //if (checkAdmin != "Super Admin")
+            //{
+            //    result.HasError = true;
+            //    result.Messages.Add("Invalid request!!!");
+            //    return result;
+            //}
             //var data = await _context.MemberRegistrationInfos
             //    //Where(x => x.IsApproved == false)
             //    .ToListAsync(cancellationToken);

@@ -10,7 +10,7 @@ public class UnionConfiguration : IEntityTypeConfiguration<UnionInfo>
 {
     public void Configure(EntityTypeBuilder<UnionInfo> builder)
     {
-        builder.ToTable("UnionInfo");
+        builder.ToTable("UnionInfo_bck");
         builder.HasKey(e => new { e.Id });
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(a => a.EnglishName).IsRequired().HasMaxLength(100);

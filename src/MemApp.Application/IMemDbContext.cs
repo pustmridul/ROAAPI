@@ -51,6 +51,7 @@ namespace MemApp.Application.Interfaces.Contexts
         DbSet<Menu> Menus { get; }
         DbSet<BloodGroup> BloodGroups { get; }
         DbSet<PaymentMethod> PaymentMethods { get; }
+        DbSet<Permission> Permissions { get; }
         DbSet<RolePermissionMap> RolePermissionMaps { get; }
         DbSet<TramsAndCondition> TramsAndConditions { get; }
         DbSet<ReleaseVersion> ReleaseVersions { get; }

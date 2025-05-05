@@ -10,7 +10,7 @@ public class DivisionConfiguration : IEntityTypeConfiguration<Division>
 {
     public void Configure(EntityTypeBuilder<Division> builder)
     {
-        builder.ToTable("Division");
+        builder.ToTable("Division_bck");
         builder.HasKey(e => new { e.Id });
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
         builder.Property(a => a.EnglishName).IsRequired().HasMaxLength(100);

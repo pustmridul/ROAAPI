@@ -63,6 +63,7 @@ namespace MemApp.Infrastructure
         public DbSet<BloodGroup> BloodGroups => Set<BloodGroup>();
         public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
         public DbSet<RolePermissionMap> RolePermissionMaps => Set<RolePermissionMap>();
+        public DbSet<Permission> Permissions => Set<Permission>();
         public DbSet<TramsAndCondition> TramsAndConditions => Set<TramsAndCondition>();
         public DbSet<SSLCommerzValidator> SSLCommerzValidators => Set<SSLCommerzValidator>();
 

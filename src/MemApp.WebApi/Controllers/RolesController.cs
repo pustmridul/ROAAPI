@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MemApp.Application.Com.Commands.SaveRolePermission;
 using MemApp.Application.Com.Queries.GetNavMenuByUserId;
+using MemApp.Application.Com.Queries.GetRolePermission;
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces;
 using MemApp.Application.Models.Requests;
@@ -8,6 +9,7 @@ using MemApp.Application.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Res.Domain.Core;
+using ResApp.Application.Com.Queries.GetRolePermission;
 
 namespace MemApp.WebApi.Controllers
 {
@@ -69,7 +71,9 @@ namespace MemApp.WebApi.Controllers
                      g => g.ToList()
                  );
 
-            return Ok(groupedPermissions);
+            var data = await Mediator.Send(new GetAllRolePermissionQuery() { });
+
+            return Ok(data);
         }
 
     }
