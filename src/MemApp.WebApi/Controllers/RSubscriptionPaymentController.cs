@@ -92,8 +92,8 @@ namespace Res.WebApi.Controllers
             {
                 var result = await Mediator.Send(new GetRoSubscriptionPaymentQuery() { PaymentNo = payemntNo });
 
-                string mimeType = "application/pdf";
-                string extension = "pdf";
+                //string mimeType = "application/pdf";
+                //string extension = "pdf";
 
                 var masterDataTable = new DataTable();
                 masterDataTable.Columns.Add("MemberName");
@@ -141,8 +141,6 @@ namespace Res.WebApi.Controllers
                     row["PaymentAmount"] = Math.Round(item.PaymentAmount, 2);
                     row["LateAmount"] = Math.Round(item.LateAmount, 2);
                    
-
-
                     dataTable.Rows.Add(row);
                 }
 

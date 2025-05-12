@@ -75,11 +75,10 @@ namespace MemApp.Application.Extensions
                     dataTable.Columns.Add(property.Name, property.PropertyType);
                 }
             }
-            catch (Exception ex) {
-
-
+            catch (Exception ex) 
+            {
                 throw ex;
-                    }
+            }
 
             // Populate the DataTable with data from the list
             foreach (var item in list)

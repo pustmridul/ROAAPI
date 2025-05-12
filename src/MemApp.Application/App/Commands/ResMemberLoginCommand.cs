@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Res.Domain.Entities;
 using ResApp.Application.App.Models;
+using ResApp.Application.Interfaces;
 using ResApp.Application.Models.DTOs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
@@ -37,15 +38,18 @@ namespace MemApp.Application.App.Commands
     {
         private readonly IMemDbContext _context;
         private readonly IPasswordHash _passwordHash;
+        private readonly IPasswordNewHash _passwordNewHash;
         private readonly IMediator _mediator;
         private readonly ITokenService _tokenService;
         private readonly JWTSettings _jwtSettings;
 
-        public ResMemberLoginCommandHandler(IMemDbContext context, IPasswordHash passwordHash, IMediator mediator, ITokenService tokenService, IOptions<JWTSettings> jwtSettings)
+        public ResMemberLoginCommandHandler(IMemDbContext context, IPasswordHash passwordHash,IPasswordNewHash passwordNewHash,
+                                            IMediator mediator, ITokenService tokenService, IOptions<JWTSettings> jwtSettings)
         {
             _context = context;
             _mediator = mediator;
             _passwordHash = passwordHash;
+            _passwordNewHash = passwordNewHash;
             _tokenService = tokenService;
             _jwtSettings = jwtSettings.Value;
         }
@@ -66,15 +70,50 @@ namespace MemApp.Application.App.Commands
                .SingleOrDefaultAsync(q => q.Email == request.Email, cancellationToken);
             if (member == null)
                 throw new LoginFailedException();
+            
+            bool isLoginValid;
+            bool isLoginValidOld;
 
-            var isLoginValid = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash ?? "", user?.PasswordSalt ?? "");
+          //   isLoginValid = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash ?? "", user?.PasswordSalt ?? "");
+
+            isLoginValid = _passwordNewHash.ValidatePassword(request.Password, user?.PasswordHash??"", user?.PasswordSalt??"");
+            isLoginValidOld = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash??"", user?.PasswordSalt??"");
 
             if (!isLoginValid)
 
             {
-                user.LoginFailedAttemptCount++;
-                user.LastLoginFailedAttemptDate = DateTime.Now;
-                throw new LoginFailedException();
+                if (!isLoginValidOld)
+                {
+                    user!.LoginFailedAttemptCount++;
+                    user.LastLoginFailedAttemptDate = DateTime.Now;
+                    throw new LoginFailedException();
+                }
+
+                if (isLoginValidOld)
+                {
+                    string newPasswordHash = string.Empty;
+                    string newPasswordSaltHash = string.Empty;
+
+                 
+
+                    _passwordNewHash.CreateHash(request.Password, ref newPasswordHash,
+                      ref newPasswordSaltHash);
+
+                 
+                    user!.PasswordHash = newPasswordHash;
+                    user.PasswordSalt = newPasswordSaltHash;
+
+                    
+                        member.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
+                        member.PasswordHash = newPasswordHash;
+                        member.PasswordSalt = newPasswordSaltHash;
+
+                        _context.MemberRegistrationInfos.Update(member);
+                    
+
+                    _context.Users.Update(user);
+                }
+                
 
             }
             UserProfile userProfile = new UserProfile()
@@ -164,7 +203,7 @@ namespace MemApp.Application.App.Commands
                     response.Data.MemberInfo.InstituteNameEnglish = member.InstituteNameEnglish;
                     response.Data.MemberInfo.InstituteNameBengali = member.InstituteNameBengali;
 
-                    response.Data.MemberInfo.PermenantAddress = member.PermenantAddress;
+                    response.Data.MemberInfo.PermanentAddress = member.PermanentAddress;
                     response.Data.MemberInfo.DivisionId = member.DivisionId;
                     response.Data.MemberInfo.ApproveTime = member.ApproveTime;
 

@@ -92,8 +92,8 @@ namespace MemApp.Application.Mem.Sales.Booking.Command
 
                     string preFix = "R";
                     var refundNo = "";
-                    var max = _context.MemLedgers.Where(q => q.RefundId.StartsWith(preFix))
-                        .Select(s => s.RefundId.Replace(preFix, "")).DefaultIfEmpty().Max();
+                    var max = _context.MemLedgers.Where(q => q.RefundId!.StartsWith(preFix))
+                        .Select(s => s.RefundId!.Replace(preFix, "")).DefaultIfEmpty().Max();
 
                     if (string.IsNullOrEmpty(max))
                     {

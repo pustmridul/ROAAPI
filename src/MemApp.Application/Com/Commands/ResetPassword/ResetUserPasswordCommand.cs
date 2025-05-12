@@ -1,17 +1,10 @@
 ﻿using MediatR;
-using MemApp.Application.Com.Models;
 using MemApp.Application.Interfaces.Contexts;
 using MemApp.Application.Interfaces;
-using MemApp.Domain.Entities;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MemApp.Application.Models;
 using Microsoft.EntityFrameworkCore;
 using MemApp.Application.Extensions;
+using ResApp.Application.Interfaces;
 
 namespace MemApp.Application.Com.Commands.ResetPassword
 {
@@ -25,9 +18,9 @@ namespace MemApp.Application.Com.Commands.ResetPassword
     {
         private readonly IMemDbContext _context;
         private readonly IMediator _mediator;
-        private readonly IPasswordHash _passwordHash;
+        private readonly IPasswordNewHash _passwordHash;
         private readonly ICurrentUserService _currentUserService;
-        public ResetUserPasswordCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash, ICurrentUserService currentUserService)
+        public ResetUserPasswordCommandHandler(IMemDbContext context, IMediator mediator, IPasswordNewHash passwordHash, ICurrentUserService currentUserService)
         {
             _context = context;
             _mediator = mediator;
@@ -48,7 +41,8 @@ namespace MemApp.Application.Com.Commands.ResetPassword
             else
             {
 
-                var member = await _context.RegisterMembers.FirstOrDefaultAsync(q => q.CardNo == obj.UserName);
+              //  var member = await _context.RegisterMembers.FirstOrDefaultAsync(q => q.CardNo == obj.UserName);
+                var member = await _context.MemberRegistrationInfos.FirstOrDefaultAsync(q => q.UserName == obj.UserName);
                
                 var newPassword = new Random(DateTime.Now.Millisecond).Next(1000, 9999);
 
@@ -62,9 +56,13 @@ namespace MemApp.Application.Com.Commands.ResetPassword
 
                 if (member != null)
                 {
-                    member.PinNoHash= newPasswordHash;
-                    member.PinNoSalt= newPasswordSaltHash;
-                    member.PinNo = _passwordHash.GetEncryptedPassword(newPassword.ToString());
+                    //member.PinNoHash= newPasswordHash;
+                    //member.PinNoSalt= newPasswordSaltHash;
+                    //member.PinNo = _passwordHash.GetEncryptedPassword(newPassword.ToString());
+
+                    member.PasswordHash = newPasswordHash;
+                    member.PasswordSalt = newPasswordSaltHash;
+                    member.Password = _passwordHash.GetEncryptedPassword(newPassword.ToString());
                 }
 
 

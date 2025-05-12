@@ -16,7 +16,7 @@ namespace ResApp.Application.ROA.MemberRegistration
    
     public class GetAllMemberByMemberShipNoQuery : IRequest<ListResult<MemberRegistrationInfoDto>>
     {
-        public string MemberShipNo { get; set; }
+        public string? MemberShipNo { get; set; }
     }
 
     public class GetAllMemberByMemberShipNoQueryHandler : IRequestHandler<GetAllMemberByMemberShipNoQuery, ListResult<MemberRegistrationInfoDto>>
@@ -51,7 +51,7 @@ namespace ResApp.Application.ROA.MemberRegistration
                     Id = data.Id,
                     ApplicationNo = data.ApplicationNo,
                     MemberShipNo = data.MemberShipNo,
-                    PermenantAddress = data.PermenantAddress,
+                    PermanentAddress = data.PermanentAddress,
                     IsApproved = data.IsApproved,
                     BusinessStartingDate = data.BusinessStartingDate,
                     CreatedBy = data.CreatedBy,

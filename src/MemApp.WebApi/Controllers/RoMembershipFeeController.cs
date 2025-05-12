@@ -67,8 +67,8 @@ namespace Res.WebApi.Controllers
                     PaymentNo = payemntNo 
                 });
 
-                string mimeType = "application/pdf";
-                string extension = "pdf";
+              ///  string mimeType = "application/pdf";
+              //  string extension = "pdf";
 
                 var masterDataTable = new DataTable();
                 masterDataTable.Columns.Add("MemberName");

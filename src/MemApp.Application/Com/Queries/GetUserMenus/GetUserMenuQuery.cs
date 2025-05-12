@@ -24,51 +24,58 @@ internal class GetUserMenuQueryHandler : IRequestHandler<GetUserMenuQuery, ListR
     {
         var response = new ListResult<MenuDto>();
 
-        var menus = await _context.Menus.Where(i=>i.ParentId == null)
+        try
+        {
+            var menus = await _context.Menus.Where(i => i.ParentId == null)
             .Include(i => i!.Childs!.Where(i => i.IsActive))
             .Where(i => i.IsActive)
             .ToListAsync(cancellationToken);
 
-        var userPermission = await _context.UserMenuMaps.Where(q => q.UserId == request.UserId).ToListAsync(cancellationToken);
+            var userPermission = await _context.UserMenuMaps.Where(q => q.UserId == request.UserId).ToListAsync(cancellationToken);
 
-        if(userPermission.Count <1)
-        {
-            response.HasError = true;
-            response.Count = 0;
-
-
+            if (userPermission.Count < 1)
+            {
+                response.HasError = true;
+                response.Count = 0;
 
 
 
-            return response;
-        }
 
-        response.Data = menus.Select(x => new MenuDto()
-        {
-            Id = x.Id,
-            Name = x.Name,
-            Url = x.Url ?? "",
-            DisplayOrder = x.DisplayOrder,
-            Visible = x.Visible,
-            NavIcon = x.NavIcon,
-            IsChecked= userPermission.Any(q=>q.MenuId == x.Id),
-            ParentId=x.ParentId,
-            Childs = x.Childs?.Select(x => new MenuDto()
+
+                return response;
+            }
+
+            response.Data = menus.Select(x => new MenuDto()
             {
                 Id = x.Id,
                 Name = x.Name,
+                ModuleName = x.ModuleName!,
                 Url = x.Url ?? "",
                 DisplayOrder = x.DisplayOrder,
                 Visible = x.Visible,
                 NavIcon = x.NavIcon,
-                IsChecked = userPermission.Any(q => q.MenuId == x.Id)
-            }).ToList(),
-        }).ToList();
+                IsChecked = userPermission.Any(q => q.MenuId == x.Id),
+                ParentId = x.ParentId,
+                Childs = x.Childs?.Select(x => new MenuDto()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Url = x.Url ?? "",
+                    DisplayOrder = x.DisplayOrder,
+                    Visible = x.Visible,
+                    NavIcon = x.NavIcon,
+                    IsChecked = userPermission.Any(q => q.MenuId == x.Id)
+                }).ToList(),
+            }).ToList();
 
-       // response.Data= response.Data.Remove(x=>x.)
-        response.HasError = false;
-        response.Count = menus.Count;
+            // response.Data= response.Data.Remove(x=>x.)
+            response.HasError = false;
+            response.Count = menus.Count;
+        }
+        catch (Exception ex)
+        {
 
+        }
 
 
         

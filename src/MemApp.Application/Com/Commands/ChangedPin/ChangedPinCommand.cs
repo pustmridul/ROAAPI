@@ -4,6 +4,7 @@ using MemApp.Application.Interfaces.Contexts;
 using MemApp.Application.Interfaces;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using ResApp.Application.Interfaces;
 
 namespace MemApp.Application.Com.Commands.ChangedPassword
 {
@@ -16,9 +17,9 @@ namespace MemApp.Application.Com.Commands.ChangedPassword
     public class ChangedPinCommandHandler : IRequestHandler<ChangedPinCommand, ChangePin>
     {
         private readonly IMemDbContext _context;
-        private readonly IPasswordHash _passwordHash;
+        private readonly IPasswordNewHash _passwordHash;
         private readonly ICurrentUserService _currentUserService;
-        public ChangedPinCommandHandler(IMemDbContext context,  IPasswordHash passwordHash, ICurrentUserService currentUserService)
+        public ChangedPinCommandHandler(IMemDbContext context,  IPasswordNewHash passwordHash, ICurrentUserService currentUserService)
         {
             _context = context;
             _passwordHash = passwordHash;

@@ -109,8 +109,8 @@ namespace MemApp.Controllers.v1.com
                 var result = await Mediator.Send(new GetMiscSaleByIdQuery() { Id = id });
 
 
-                string mimeType = "application/pdf";
-                string extension = "pdf";
+                //string mimeType = "application/pdf";
+                //string extension = "pdf";
 
                 var masterDataTable = new DataTable();
                 masterDataTable.Columns.Add("InvoiceNo");

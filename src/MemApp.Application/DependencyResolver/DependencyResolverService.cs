@@ -5,6 +5,8 @@ using System.Reflection;
 using MediatR;
 using MemApp.Application.Exceptions;
 using MemApp.Application.Helper;
+using ResApp.Application.Interfaces;
+using ResApp.Application.Services;
 
 namespace MemApp.Application.DependencyResolver
 {
@@ -13,6 +15,7 @@ namespace MemApp.Application.DependencyResolver
         public static IServiceCollection ApplicationRegister(this IServiceCollection services)
         {
             services.AddScoped<IPasswordHash, PasswordHash>();
+            services.AddScoped<IPasswordNewHash, PasswordNewHash>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IDashboardService, DasboardService>();

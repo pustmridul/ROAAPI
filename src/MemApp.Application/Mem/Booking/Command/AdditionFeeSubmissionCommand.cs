@@ -67,7 +67,7 @@ namespace MemApp.Application.Mem.Booking.Command
                 s.MemberId,
                 s.Phone,
                 s.Email
-            }).FirstOrDefaultAsync(q => q.Id == venueBooking.MemberId, cancellation);
+            }).FirstOrDefaultAsync(q => q.Id == venueBooking!.MemberId, cancellation);
 
             var venuTitle = venueBooking?.VenueBookingDetails?.FirstOrDefault()?.VenueTitle ?? "";
 
@@ -76,7 +76,7 @@ namespace MemApp.Application.Mem.Booking.Command
 
                 TransactionType = "VENUEBOOKING",
                 TransactionFrom = _currentUserService.AppId,
-                ReferenceId = venueBooking.BookedNo,
+                ReferenceId = venueBooking!.BookedNo,
                 Amount = (-1) * venueBooking.PaymentAmount,
                 Dates = venueBooking.PaymentDate,
                 PrvCusID = venueBooking.MemberId.ToString(),

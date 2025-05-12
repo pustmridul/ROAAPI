@@ -5,6 +5,9 @@ using MemApp.Application.Interfaces;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using MemApp.Application.App.Models;
+using ResApp.Application.Interfaces;
+using MemApp.Application.Mem.Members.Models;
+using ResApp.Application.Services;
 
 namespace MemApp.Application.Com.Commands.ChangedPassword
 {
@@ -17,8 +20,8 @@ namespace MemApp.Application.Com.Commands.ChangedPassword
     public class NewPasswordCommandHandler : IRequestHandler<NewPasswordCommand, UserVm>
     {
         private readonly IMemDbContext _context;
-        private readonly IPasswordHash _passwordHash;
-        public NewPasswordCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash)
+        private readonly IPasswordNewHash _passwordHash;
+        public NewPasswordCommandHandler(IMemDbContext context, IMediator mediator, IPasswordNewHash passwordHash)
         {
             _context = context;
             _passwordHash = passwordHash;
@@ -65,7 +68,8 @@ namespace MemApp.Application.Com.Commands.ChangedPassword
                     }
                     else
                     {   
-                        var memberObj = await _context.RegisterMembers.SingleOrDefaultAsync(q=>q.Id==request.Model.MemberId, cancellation);
+                      //  var memberObj = await _context.RegisterMembers.SingleOrDefaultAsync(q=>q.Id==request.Model.MemberId, cancellation);
+                        var memberObj = await _context.MemberRegistrationInfos.SingleOrDefaultAsync(q=>q.Id==request.Model.MemberId, cancellation);
                         if(memberObj == null)
                         {
                             throw new Exception();
@@ -74,15 +78,19 @@ namespace MemApp.Application.Com.Commands.ChangedPassword
                         string newPasswordHash = string.Empty;
                         string newPasswordSaltHash = string.Empty;
 
-                        _passwordHash.CreateHash(request.Model.NewPassword.ToString(CultureInfo.InvariantCulture), ref newPasswordHash,
+                        _passwordHash.CreateHash(request.Model.NewPassword!.ToString(CultureInfo.InvariantCulture), ref newPasswordHash,
                             ref newPasswordSaltHash);
                         obj.PasswordHash = newPasswordHash;
                         obj.PasswordSalt = newPasswordSaltHash;
 
                         obj.LastPasswordResetOn = DateTime.Now;
 
-                        memberObj.PinNoHash = newPasswordHash;
-                        memberObj.PinNoSalt = newPasswordSaltHash;
+                        //memberObj.PinNoHash = newPasswordHash;
+                        //memberObj.PinNoSalt = newPasswordSaltHash;
+
+                        memberObj.Password = _passwordHash.GetEncryptedPassword(request.Model.NewPassword.ToString());
+                        memberObj.PasswordHash = newPasswordHash;
+                        memberObj.PasswordSalt = newPasswordSaltHash;
 
                         await _context.SaveChangesAsync(cancellation);
 

@@ -48,8 +48,8 @@ namespace MemApp.WebApi.Controllers.Reports
 
                 var result = await Mediator.Send(new MemberLedgerDetailReportQuery() { Model = model });
 
-                string mimeType = "application/pdf";
-                string extension = "pdf";
+                //string mimeType = "application/pdf";
+                //string extension = "pdf";
 
                 var dataTable = new DataTable();
 

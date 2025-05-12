@@ -145,7 +145,7 @@ namespace MemApp.Application.Services
                         File.Exists(attachmentFilePath))
                     {
                         var attachment = new Attachment(attachmentFilePath);
-                        attachment.ContentDisposition.CreationDate = File.GetCreationTime(attachmentFilePath);
+                        attachment.ContentDisposition!.CreationDate = File.GetCreationTime(attachmentFilePath);
                         attachment.ContentDisposition.ModificationDate = File.GetLastWriteTime(attachmentFilePath);
                         attachment.ContentDisposition.ReadDate = File.GetLastAccessTime(attachmentFilePath);
                         if (!String.IsNullOrEmpty(attachmentFileName))

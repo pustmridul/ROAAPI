@@ -7,6 +7,7 @@ using MemApp.Domain.Entities;
 using MemApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Res.Domain.Entities;
+using ResApp.Application.Interfaces;
 using System.Globalization;
 
 namespace MemApp.Application.Com.Commands.CreateUser
@@ -42,12 +43,15 @@ namespace MemApp.Application.Com.Commands.CreateUser
         private readonly IMemDbContext _context;
         private readonly IMediator _mediator;
         private readonly IPasswordHash _passwordHash;
+        private readonly IPasswordNewHash _passwordNewHash;
         private readonly IPermissionHandler _permissionHandler;
-        public CreateUserCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash, IPermissionHandler permissionHandler)
+        public CreateUserCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash, 
+                                        IPasswordNewHash passwordNewHash, IPermissionHandler permissionHandler)
         {
             _context = context;
             _mediator = mediator;
             _passwordHash = passwordHash;
+            _passwordNewHash = passwordNewHash;
             _permissionHandler = permissionHandler;
         }
         public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellation)
@@ -113,10 +117,14 @@ namespace MemApp.Application.Com.Commands.CreateUser
                 //_passwordHash.CreateHash(request.Password.ToString(CultureInfo.InvariantCulture), ref newPasswordHash,
                 //    ref newPasswordSaltHash);
 
-                _passwordHash.CreateHash(request.Password, ref newPasswordHash,
-                   ref newPasswordSaltHash);
+                //_passwordHash.CreateHash(request.Password, ref newPasswordHash,
+                //   ref newPasswordSaltHash);
 
-                memberNew.Password = _passwordHash.GetEncryptedPassword(request.Password.ToString());
+                _passwordNewHash.CreateHash(request.Password, ref newPasswordHash,
+                  ref newPasswordSaltHash);
+
+               // memberNew.Password = _passwordHash.GetEncryptedPassword(request.Password.ToString());
+                memberNew.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
                 memberNew.PasswordHash = newPasswordHash;
                 memberNew.PasswordSalt = newPasswordSaltHash;
 

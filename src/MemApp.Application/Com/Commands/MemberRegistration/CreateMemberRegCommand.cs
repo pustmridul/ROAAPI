@@ -311,7 +311,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                     //  MemberShipNo=GenerateMembershipNo(),
                       MemberShipNo= lastmembershipNo, // GenerateMembershipNoAsync(),// lastmembershipNo,
                       IsApproved=false,// request.IsApproved,
-                      PermenantAddress=request.PermenantAddress,
+                      PermanentAddress=request.PermenantAddress,
                      // Email=request.EmailId,
                       CreatedOn=DateTime.UtcNow,
                       BusinessStartingDate=request.BusinessStartingDate,

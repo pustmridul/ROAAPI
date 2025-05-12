@@ -40,8 +40,8 @@ namespace MemApp.Application.Mem.AreaLayouts.Queries
             {
                 result.HasError = false;
                 var abc = new AreaLayoutTableDetail();
-                abc.Title = data.FirstOrDefault().AreaLayout.Title;
-                abc.DisplayName = data.FirstOrDefault().AreaLayout.DisplayName;
+                abc.Title = data.FirstOrDefault()!.AreaLayout.Title;
+                abc.DisplayName = data.FirstOrDefault()!.AreaLayout.DisplayName!;
 
                 var tableList= data.Select(i=>i.TableSetup).Distinct().ToList();
                 foreach(var d in tableList)

@@ -6,6 +6,7 @@ using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using MemApp.Domain.Enums;
 using MemApp.Application.Extensions;
+using ResApp.Application.Interfaces;
 
 namespace MemApp.Application.Com.Commands.ChangedPassword
 {
@@ -36,9 +37,9 @@ namespace MemApp.Application.Com.Commands.ChangedPassword
     {
         private readonly IMemDbContext _context;
         private readonly IMediator _mediator;
-        private readonly IPasswordHash _passwordHash;
+        private readonly IPasswordNewHash _passwordHash;
         private readonly ICurrentUserService _currentUserService;
-        public ChangedPasswordCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash, ICurrentUserService currentUserService)
+        public ChangedPasswordCommandHandler(IMemDbContext context, IMediator mediator, IPasswordNewHash passwordHash, ICurrentUserService currentUserService)
         {
             _context = context;
             _mediator = mediator;

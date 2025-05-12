@@ -412,7 +412,7 @@ namespace MemApp.WebApi.Controllers.v1
             data.Add("master", masterDataTable);
             var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpSummary" + ".rdlc";
             //var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpDetail" + ".rdlc";
-            ReportDomain reportDomain = new("PDF", data, path, null);
+            ReportDomain reportDomain = new("PDF", data, path, null!);
             return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + extension);
         }
 
@@ -426,8 +426,8 @@ namespace MemApp.WebApi.Controllers.v1
             });
             var topUp = result.Data;
 
-            string mimeType = "application/pdf";
-            string extension = "pdf";
+            //string mimeType = "application/pdf";
+            //string extension = "pdf";
 
             var dataTable = new DataTable();
 
@@ -468,7 +468,7 @@ namespace MemApp.WebApi.Controllers.v1
             data.Add("ds", dataTable);
             var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpReport" + ".rdlc";
 
-            ReportDomain reportDomain = new("PDF", data, path, null);
+            ReportDomain reportDomain = new("PDF", data, path, null!);
             return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + "PDF");
 
 

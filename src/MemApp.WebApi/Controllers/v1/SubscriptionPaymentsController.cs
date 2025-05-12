@@ -375,8 +375,8 @@ namespace MemApp.WebApi.Controllers.v1
             {
                 var result = await Mediator.Send(new GetSubscriptionPaymentQuery() { PaymentNo = payemntNo });
 
-                string mimeType = "application/pdf";
-                string extension = "pdf";
+                //string mimeType = "application/pdf";
+                //string extension = "pdf";
 
                 var dataTable = new DataTable();
 

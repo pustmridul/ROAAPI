@@ -49,7 +49,7 @@ namespace ResApp.Application.ROA.Committees.Queries
                 result.CommitteeType = data.CommitteeType;
                 result.CommitteeYear = data.CommitteeYear;
 
-                result.CommitteeDate = data.CommitteeDate.ToString("yyyy-mm-dd");
+                result.CommitteeDate = data.CommitteeDate.ToString("MMM dd, yyyy");
                 result.CommitteeCategoryName = data.CommitteeCategory?.Title!;
                 result.DivisionName = data.DivisionId != null ? _context.Divisions.FirstOrDefault(x => x.Id == data.DivisionId)?.EnglishName : "";
                 result.DistrictName = data.DistrictId != null ? _context.Districts.FirstOrDefault(x => x.Id == data.DistrictId)?.EnglishName : "";

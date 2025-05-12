@@ -61,7 +61,7 @@ namespace ResApp.Application.Com.Commands.RoTopUp
                 throw new UnauthorizedAccessException();
             }
             var result = new TopUpVm();
-            decimal curentBalance = 0;
+          //  decimal curentBalance = 0;
             try
             {
                 if (request.Model.TopUpDetails.Count > 1)

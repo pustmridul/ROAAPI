@@ -113,8 +113,8 @@ namespace Res.WebApi.Controllers
             {
                 var result = await Mediator.Send(new ExportRoCommitteeInfoQuery() { Id = committeeId });
 
-                string mimeType = "application/pdf";
-                string extension = "pdf";
+                //string mimeType = "application/pdf";
+                //string extension = "pdf";
 
                 var masterDataTable = new DataTable();
                 masterDataTable.Columns.Add("Title");
@@ -126,6 +126,7 @@ namespace Res.WebApi.Controllers
                 masterDataTable.Columns.Add("DistrictName");
                 masterDataTable.Columns.Add("ThanaName");
                 masterDataTable.Columns.Add("ZoneName");
+                masterDataTable.Columns.Add("UnionName");
 
                 DataRow masterRow;
                 masterRow = masterDataTable.NewRow();
@@ -142,6 +143,7 @@ namespace Res.WebApi.Controllers
                 masterRow["DistrictName"] = result.DistrictName;
                 masterRow["ZoneName"] = result.ZoneName;
                 masterRow["ThanaName"] = result.ThanaName;
+                masterRow["UnionName"] = result.UnionName;
 
 
 
@@ -201,6 +203,14 @@ namespace Res.WebApi.Controllers
                 throw new Exception(ex.Message);
             }
 
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> Remove(int id)
+        {
+            var result = await Mediator.Send(new DeleteRoCommitteeCommand() { Id = id });
+            return Ok(result);
         }
     }
 }

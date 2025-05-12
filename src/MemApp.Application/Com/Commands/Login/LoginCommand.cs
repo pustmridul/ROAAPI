@@ -11,6 +11,7 @@ using MemApp.Domain.Entities;
 using MemApp.Domain.Entities.com;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using ResApp.Application.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
@@ -32,16 +33,18 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokenRes
 {
     private readonly IMemDbContext _context;
     private readonly IPasswordHash _passwordHash;
+    private readonly IPasswordNewHash _passwordNewHash;
     private readonly IMediator _mediator;
     private readonly ITokenService _tokenService;
     private readonly JWTSettings _jwtSettings;
 
-    public LoginCommandHandler(IMemDbContext context, IPasswordHash passwordHash
+    public LoginCommandHandler(IMemDbContext context, IPasswordHash passwordHash, IPasswordNewHash passwordNewHash
     , IMediator mediator, ITokenService tokenService, IOptions<JWTSettings> jwtSettings)
     {
         _context = context;
         _mediator = mediator;
         _passwordHash = passwordHash;
+        _passwordNewHash = passwordNewHash;
         _tokenService = tokenService;
         _jwtSettings = jwtSettings.Value;
     }
@@ -62,19 +65,58 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokenRes
             throw new LoginFailedException();
         }
 
-        var isLoginValid = _passwordHash.ValidatePassword(request.Password, user.PasswordHash, user.PasswordSalt);
+        bool isLoginValid;
+        bool isLoginValidOld;
+
+         isLoginValid = _passwordNewHash.ValidatePassword(request.Password, user.PasswordHash, user.PasswordSalt);
+         isLoginValidOld = _passwordHash.ValidatePassword(request.Password, user.PasswordHash, user.PasswordSalt);
 
         if (!isLoginValid)
 
         {
-            user.LoginFailedAttemptCount++;
-            user.LastLoginFailedAttemptDate = DateTime.Now;
+            if (!isLoginValidOld)
+            {
+                user.LoginFailedAttemptCount++;
+                user.LastLoginFailedAttemptDate = DateTime.Now;
 
-            //throw new LoginFailedException();
+                //throw new LoginFailedException();
 
-            result.HasError = true;
-            result.Messages.Add("Invalid User or Password");
-            return result;
+                result.HasError = true;
+                result.Messages.Add("Invalid User or Password");
+                return result;
+            }
+            if(isLoginValidOld)
+            {
+                string newPasswordHash = string.Empty;
+                string newPasswordSaltHash = string.Empty;
+
+                //_passwordHash.CreateHash(request.Password.ToString(CultureInfo.InvariantCulture), ref newPasswordHash,
+                //    ref newPasswordSaltHash);
+
+                //_passwordHash.CreateHash(request.Password, ref newPasswordHash,
+                //   ref newPasswordSaltHash);
+
+                _passwordNewHash.CreateHash(request.Password, ref newPasswordHash,
+                  ref newPasswordSaltHash);
+
+                // memberNew.Password = _passwordHash.GetEncryptedPassword(request.Password.ToString());
+              //  user.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
+                user.PasswordHash = newPasswordHash;
+                user.PasswordSalt = newPasswordSaltHash;
+
+                var member= _context.MemberRegistrationInfos.FirstOrDefault(x=>x.Id==user.MemberId);
+                if (member != null)
+                {
+                    member.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
+                    member.PasswordHash = newPasswordHash;
+                    member.PasswordSalt = newPasswordSaltHash;
+
+                    _context.MemberRegistrationInfos.Update(member);
+                }
+
+                _context.Users.Update(user);
+            }
+           
         }
 
         UserProfile userProfile = new UserProfile()
@@ -86,7 +128,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokenRes
             AppId = user.AppId,
             Roles = await _context.UserRoleMaps.Distinct().Where(q => q.UserId == user.Id && q.IsActive).Select(s => s.RoleId).ToListAsync(cancellationToken),
             PhoneNo = user.PhoneNo ?? "",
-            UserName = user.UserName,
+            UserName = user.UserName!,
             MemberId = user.MemberId,
         };
 

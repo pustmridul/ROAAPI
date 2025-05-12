@@ -7,7 +7,6 @@ using MemApp.Application.MessageInboxs.Queries.GetMessageByMemberId;
 using MemApp.Application.MessageInboxs.Queries.GetMessageByType;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MemApp.Application.MessageInboxs.Models;
 using MemApp.Application.MessageInboxs.Queries;
 
 namespace MemApp.WebApi.Controllers.v1

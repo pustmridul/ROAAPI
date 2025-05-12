@@ -8,6 +8,7 @@ using MemApp.Application.Services;
 using MemApp.Domain.Entities;
 using MemApp.Domain.Entities.mem;
 using Microsoft.EntityFrameworkCore;
+using ResApp.Application.Interfaces;
 using System.Globalization;
 
 namespace MemApp.Application.Mem.Members.Command
@@ -24,14 +25,14 @@ namespace MemApp.Application.Mem.Members.Command
         private readonly IMapper _mapper;
         private readonly IMemDbContext _context;
         private readonly ICurrentUserService _currentUserService;
-        private readonly IPasswordHash _passwordHash;
+        private readonly IPasswordNewHash _passwordHash;
 
         public CreateMemberFamilyCommandHandler(
             IMediator mediator,
             IMapper mapper, 
             IMemDbContext context, 
             ICurrentUserService currentUserService, 
-            IPasswordHash passwordHash)
+            IPasswordNewHash passwordHash)
         {
             _mediator = mediator;
             _mapper = mapper;

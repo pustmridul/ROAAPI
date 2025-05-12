@@ -230,7 +230,15 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                             result.HasError = false;
                             result.Messages?.Add("Transaction Success");
                             result.Messages?.Add(paymentNo);
-                            result.Messages?.Add(tobj.PaymentFor!);
+                            if(tobj.PaymentFor== "Membership Fee")
+                            {
+                                result.Messages?.Add("MembershipFee");
+                            }
+                            if (tobj.PaymentFor == "Subscription Fee")
+                            {
+                                result.Messages?.Add("SubscriptionFee");
+                            }
+                           // result.Messages?.Add(tobj.PaymentFor!);
                             return result;
                         }
                         else

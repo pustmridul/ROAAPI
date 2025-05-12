@@ -88,7 +88,7 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                 //}
               //  var result = new SSLCommerzInitResponse();
                 var memberObj = await _context.MemberRegistrationInfos
-                    .Select(s => new { s.Id, s.PhoneNo, s.Email, s.MemberShipNo, s.Name, s.PermenantAddress })
+                    .Select(s => new { s.Id, s.PhoneNo, s.Email, s.MemberShipNo, s.Name, s.PermanentAddress })
                    .FirstOrDefaultAsync(q => q.Id == request.Model.MemberId, cancellation);
 
                 if (memberObj == null)
@@ -116,7 +116,7 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                     request.Model.cus_name = memberObj.Name;
                     request.Model.cus_phone = memberObj.PhoneNo ?? "";
                     request.Model.cus_email = memberObj.Email ?? "";
-                    request.Model.cus_add1 = memberObj.PermenantAddress ?? "";
+                    request.Model.cus_add1 = memberObj.PermanentAddress ?? "";
                 }
 
                 var obj = new TopUp();

@@ -1,14 +1,8 @@
 ﻿using MediatR;
-using MemApp.Application.Com.Commands.CreateUser;
-using MemApp.Application.Mem.BoardMeetingMinuets.Command;
-using MemApp.Application.Mem.MemberTypes.Queries;
-using MemApp.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.Com.Commands.MemberRegistration;
 using ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo;
-using ResApp.Application.Com.Commands.UpdateThana;
 using ResApp.Application.Com.Queries.GetMemberRegistrationInfo;
 using ResApp.Application.Models;
 using ResApp.Application.Models.DTOs;

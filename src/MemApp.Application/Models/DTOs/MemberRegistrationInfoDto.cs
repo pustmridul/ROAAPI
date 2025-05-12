@@ -36,7 +36,7 @@ namespace ResApp.Application.Models.DTOs
         public string? InstituteNameEnglish { get; set; }
         public string? PhoneNo { get; set; }
         public string? Email { get; set; }
-        public string? PermenantAddress { get; set; }
+        public string? PermanentAddress { get; set; }
         public string? MemberNID { get; set; }
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }
@@ -100,7 +100,7 @@ namespace ResApp.Application.Models.DTOs
         public string? InstituteNameBengali { get; set; }
         public string? InstituteNameEnglish { get; set; }
         public string? PhoneNo { get; set; }
-        public string? PermenantAddress { get; set; }
+        public string? PermanentAddress { get; set; }
         public string? MemberNID { get; set; }
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }

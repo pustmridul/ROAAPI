@@ -1,17 +1,9 @@
 ﻿using MediatR;
-using MemApp.Application.Com.Commands.CreateFeedbackCategory;
 using MemApp.Application.Com.Models;
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces.Contexts;
 using MemApp.Domain.Entities.com;
-using MemApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MemApp.Domain.Entities.com;
 
 namespace MemApp.Application.Com.Commands.CreateFeedbackCategory
 {

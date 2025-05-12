@@ -5,6 +5,7 @@ namespace MemApp.Domain.Entities
     public class Menu:BaseEntity
     {
         public string Name { get; set; } = string.Empty;
+        public string? ModuleName { get; set; } = string.Empty;
         public string? Url { get; set; }
         public int DisplayOrder { get; set; }
         public bool Visible { get; set; }

@@ -11,7 +11,7 @@ namespace MemApp.Application.Mem.BoardMeetingMinuets.Queries
     public class GetBoardMeetingMinuetByIdQuery : IRequest<Result<BoardMeetingMinuetDto>>
     {
         public int Id { get; set; }
-        public string WebRootPath { get; set; }
+        public string? WebRootPath { get; set; }
     }
 
 

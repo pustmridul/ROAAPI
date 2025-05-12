@@ -410,7 +410,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                     checkUserExist.ApplicationNo = request.ApplicationNo;
                  
-                    checkUserExist.PermenantAddress = request.PermenantAddress;
+                    checkUserExist.PermanentAddress = request.PermenantAddress;
                    
                     checkUserExist.BusinessStartingDate = request.BusinessStartingDate;
                     checkUserExist.DistrictId = request.DistrictId;

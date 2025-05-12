@@ -31,7 +31,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public string? InstituteNameBengali { get; set; }
         public string? InstituteNameEnglish { get; set; }
         public string? PhoneNo { get; set; }
-        public string? PermenantAddress { get; set; }
+        public string? PermanentAddress { get; set; }
         public string? MemberNID { get; set; }
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }
@@ -331,7 +331,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                 //  memberReg.MemberShipNo = GenerateMembershipNo();
                     memberReg.MemberShipNo = lastmembershipNo; // await GenerateMembershipNoAsync();// lastmembershipNo;
                     memberReg.IsApproved = false;
-                    memberReg.PermenantAddress = request.PermenantAddress;
+                    memberReg.PermanentAddress = request.PermanentAddress;
                     memberReg.CreatedOn = DateTime.UtcNow;
                     memberReg.BusinessStartingDate = request.BusinessStartingDate;
                     memberReg.DistrictId = request.DistrictId;

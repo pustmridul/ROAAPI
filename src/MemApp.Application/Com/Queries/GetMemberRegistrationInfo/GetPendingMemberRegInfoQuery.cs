@@ -172,7 +172,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     {
                         Id = s.Id,
                         ApplicationNo = s.ApplicationNo,
-                        PermenantAddress = s.PermenantAddress,
+                        PermanentAddress = s.PermanentAddress,
                         IsApproved = s.IsApproved,
                         BusinessStartingDate = s.BusinessStartingDate,
                         CreatedBy = s.CreatedBy,

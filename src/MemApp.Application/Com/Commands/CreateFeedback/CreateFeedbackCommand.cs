@@ -57,11 +57,11 @@ namespace MemApp.Application.Com.Commands.CreateFeedback
                     .Include(c => c.RegisterMember)
                     .FirstOrDefaultAsync(c => c.Id == obj.FeedbackCategoryId);
 
-                var mail = FeedbackCategory.RegisterMember.Email;
+                var mail = FeedbackCategory!.RegisterMember.Email;
                 var mailBody = $"You have a feedback from {FeedbackCategory.RegisterMember.FullName}, Membershipno: {FeedbackCategory.RegisterMember.MembershipNo}. Feedback: {request.Model.Message}";
                 if (!string.IsNullOrEmpty(mail))
                 {
-                    _broadcastHandler.SendEmail(mail, FeedbackCategory.Name, mailBody);
+                  await  _broadcastHandler.SendEmail(mail, FeedbackCategory.Name, mailBody);
                 }
 
 

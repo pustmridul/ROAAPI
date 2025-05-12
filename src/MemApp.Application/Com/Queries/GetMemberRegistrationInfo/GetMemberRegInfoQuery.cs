@@ -54,7 +54,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     ApplicationNo = data.ApplicationNo,
                     Email=data.Email,
                     MemberShipNo=data.MemberShipNo,
-                    PermenantAddress = data.PermenantAddress,
+                    PermanentAddress = data.PermanentAddress,
                     IsApproved = data.IsApproved,
                     BusinessStartingDate = data.BusinessStartingDate,
                     CreatedBy = data.CreatedBy,
