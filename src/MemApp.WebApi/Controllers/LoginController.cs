@@ -1,11 +1,11 @@
 ﻿using MediatR;
-using MemApp.Application.App.Commands;
 using MemApp.Application.App.Models;
 using MemApp.Application.Com.Commands.ChangedPassword;
 using MemApp.Application.Com.Commands.Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Res.WebApi.Controllers;
+using ResApp.Application.App.Commands;
 
 namespace MemApp.WebApi.Controllers
 {

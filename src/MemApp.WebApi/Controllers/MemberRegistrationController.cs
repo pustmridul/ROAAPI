@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.Com.Commands.MemberRegistration;
 using ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo;
-using ResApp.Application.Com.Queries.GetMemberRegistrationInfo;
 using ResApp.Application.Models;
 using ResApp.Application.Models.DTOs;
 using ResApp.Application.ROA.MemberCategory.Queries;
+using ResApp.Application.ROA.MemberRegistration.Queries;
 
 namespace Res.WebApi.Controllers
 {

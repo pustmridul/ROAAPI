@@ -1,12 +1,8 @@
 ﻿using MediatR;
-using MemApp.Application.Com.Queries.GetNavMenuByUserId;
 using MemApp.Application.Mem.MemberTypes.Queries;
-using MemApp.WebApi.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.Com.Commands.Division.Update;
-using ResApp.Application.Com.Commands.MemberRegistration;
 using ResApp.Application.Com.Commands.UpdateThana;
 using ResApp.Application.Com.Queries.GetDivisionQuery;
 using ResApp.Application.ROA.Zone.Command;

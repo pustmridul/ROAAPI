@@ -88,7 +88,7 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                 //}
               //  var result = new SSLCommerzInitResponse();
                 var memberObj = await _context.MemberRegistrationInfos
-                    .Select(s => new { s.Id, s.PhoneNo, s.Email, s.MemberShipNo, s.Name, s.PermanentAddress })
+                    .Select(s => new { s.Id, s.PhoneNo, s.Email, s.MemberShipNo, s.MembershipFee, s.Name, s.PermanentAddress })
                    .FirstOrDefaultAsync(q => q.Id == request.Model.MemberId, cancellation);
 
                 if (memberObj == null)
@@ -119,17 +119,18 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                     request.Model.cus_add1 = memberObj.PermanentAddress ?? "";
                 }
 
-                var obj = new TopUp();
-                   
-                    obj.OnlineTopUp = true;
-                    obj.Status = "Pending";
-                    obj.IsActive = false;
-                    obj.MemberShipNo = memberShipNo;
-                    obj.CardNo = cardNo;
-                   // obj.RegisterMemberId = request.Model.MemberId;
-                    obj.MemberId = request.Model.MemberId;
-                    obj.TopUpDate = DateTime.Now;
-                    _context.TopUps.Add(obj);
+                var obj = new TopUp
+                {
+                    OnlineTopUp = true,
+                    Status = "Pending",
+                    IsActive = false,
+                    MemberShipNo = memberShipNo,
+                    CardNo = cardNo,
+                    // obj.RegisterMemberId = request.Model.MemberId;
+                    MemberId = request.Model.MemberId,
+                    TopUpDate = DateTime.Now
+                };
+                _context.TopUps.Add(obj);
 
                     obj.TotalAmount = request.Model.total_amount;
                     obj.Note = GenerateUniqueId() +request.Model.MemberId;
@@ -181,6 +182,12 @@ namespace MemApp.Application.PaymentGateway.SslCommerz.Command
                     {
                         result.HasError = true;
                         result.Messages?.Add("Member Fee has been paid already!!");
+                        return result;
+                    }
+                    if(memberObj!.MembershipFee != request.Model.total_amount)
+                    {
+                        result.HasError = true;
+                        result.Messages?.Add("Please set the right amount for Membership Fee!!");
                         return result;
                     }
                     obj.PaymentFor = "Membership Fee";

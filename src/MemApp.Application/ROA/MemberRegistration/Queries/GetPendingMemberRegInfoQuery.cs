@@ -3,45 +3,44 @@ using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces;
 using MemApp.Application.Interfaces.Contexts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using ResApp.Application.Models.DTOs;
 
-namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
+namespace ResApp.Application.ROA.MemberRegistration.Queries
 {
-    public class GetAllMemberRegInfoQuery : IRequest<ListResult<MemberRegistrationInfoDto>>
+    public class GetPendingMemberRegInfoQuery : IRequest<ListResult<MemberRegistrationInfoDto>>
     {
-        //public string? AppId { get; set; }
-        //public int? PageSize { get; set; } = 10;
-        //public int? PageNo { get; set; } = 1;
-        //public string? SearchText { get; set; }
-
+        // public int DivId {  get; set; }
+        //public int? pageSize { get; set; } = 10;
+        //public int? pageNo { get; set; } = 1;
         public MemberSearchParam Model { get; set; } = new MemberSearchParam();
     }
 
-    public class GetAllMemberRegInfoQueryHandler : IRequestHandler<GetAllMemberRegInfoQuery, ListResult<MemberRegistrationInfoDto>>
+    public class GetPendingMemberRegInfoQueryHandler : IRequestHandler<GetPendingMemberRegInfoQuery, ListResult<MemberRegistrationInfoDto>>
     {
         private readonly IMemDbContext _context;
         private readonly ICurrentUserService _currentUserService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public GetAllMemberRegInfoQueryHandler(IMemDbContext context, ICurrentUserService currentUserService,  IHttpContextAccessor httpContextAccessor)
+        public GetPendingMemberRegInfoQueryHandler(IMemDbContext context, ICurrentUserService currentUserService, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _currentUserService = currentUserService;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ListResult<MemberRegistrationInfoDto>> Handle(GetAllMemberRegInfoQuery request, CancellationToken cancellationToken)
+        public async Task<ListResult<MemberRegistrationInfoDto>> Handle(GetPendingMemberRegInfoQuery request, CancellationToken cancellationToken)
         {
             var checkAdmin = _currentUserService.Current().UserName;
             var result = new ListResult<MemberRegistrationInfoDto>();
 
             string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
 
-            //if (checkAdmin != "Super Admin")
-            //{
-            //    result.HasError = true;
-            //    result.Messages.Add("Invalid request!!!");
-            //    return result;
-            //}
+            if (checkAdmin != "Super Admin")
+            {
+                result.HasError = true;
+                result.Messages.Add("Invalid request!!!");
+                return result;
+            }
             //var data = await _context.MemberRegistrationInfos
             //    //Where(x => x.IsApproved == false)
             //    .ToListAsync(cancellationToken);
@@ -51,7 +50,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
             try
             {
                 var query = _context.MemberRegistrationInfos
-                             .Where(x => x.IsActive && x.IsFilled && x.IsApproved) // Base filters
+                             .Where(x => x.IsActive && x.IsFilled && x.IsApproved == false) // Base filters
                              .AsQueryable(); // Start with IQueryable
 
                 if (!string.IsNullOrEmpty(request.Model.SearchText))
@@ -138,25 +137,6 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     query = query.Where(x => x.ThanaId == request.Model.ThanaId);
                 }
 
-                if (request.Model.ZoneId.HasValue)
-                {
-                    query = query.Where(x => x.ZoneId == request.Model.ZoneId);
-                }
-
-                if (request.Model.MunicipalityId.HasValue)
-                {
-                    query = query.Where(x => x.MunicipalityId == request.Model.MunicipalityId);
-                }
-
-                if (request.Model.UnionInfoId.HasValue)
-                {
-                    query = query.Where(x => x.UnionInfoId == request.Model.UnionInfoId);
-                }
-
-                if (request.Model.WardId.HasValue)
-                {
-                    query = query.Where(x => x.WardId == request.Model.WardId);
-                }
                 //if (request.Model.IsApproved !=null)
                 //{
                 //    query = query.Where(x => x.IsApproved == request.Model.IsApproved);
@@ -175,9 +155,9 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                 );
 
 
-        //        var data = await _context.MemberRegistrationInfos.Where(x => x.IsActive && x.IsFilled &&
-        //(!string.IsNullOrEmpty(request.Model.SearchText) ? x.Name!.ToLower().Contains(request.Model.SearchText.ToLower()) : true)).OrderByDescending(o => o.Id)
-        //    .ToPaginatedListAsync(request.Model.PageNo.GetValueOrDefault(), request.Model.PageSize.GetValueOrDefault(), cancellationToken);
+                //        var data = await _context.MemberRegistrationInfos.Where(x => x.IsActive && x.IsFilled &&
+                //(!string.IsNullOrEmpty(request.Model.SearchText) ? x.Name!.ToLower().Contains(request.Model.SearchText.ToLower()) : true)).OrderByDescending(o => o.Id)
+                //    .ToPaginatedListAsync(request.Model.PageNo.GetValueOrDefault(), request.Model.PageSize.GetValueOrDefault(), cancellationToken);
 
                 if (data.Data.Count == 0)
                 {
@@ -209,7 +189,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                         NIDImgPath = s.NIDImgPath == null ? baseUrl + "/uploadsMemberNID/testNID.png" : baseUrl + "/uploadsMemberNID/" + s.NIDImgPath,
                         NomineeName = s.NomineeName,
                         PhoneNo = s.PhoneNo,
-                       // ImgFileUrl = s.ImgFileUrl == null ? baseUrl + "/Members/test.jpg" : baseUrl + "/" + s.ImgFileUrl,
+                        // ImgFileUrl = s.ImgFileUrl == null ? baseUrl + "/Members/test.jpg" : baseUrl + "/" + s.ImgFileUrl,
                         SignatureImgPath = s.SignatureImgPath == null ? baseUrl + "/uploadsMemberSign/testSign.jpg" : baseUrl + "/uploadsMemberSign/" + s.SignatureImgPath,
                         SignatureUploadingTime = s.SignatureUploadingTime,
                         ThanaId = s.ThanaId,
@@ -233,7 +213,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                 result.Messages.Add("Something went wrong!!!!");
             }
 
-           
+
 
             return result;
         }

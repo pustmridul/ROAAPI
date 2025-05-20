@@ -5,7 +5,7 @@ using MemApp.Application.Interfaces.Contexts;
 using Microsoft.EntityFrameworkCore;
 using ResApp.Application.Models.DTOs;
 
-namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
+namespace ResApp.Application.ROA.MemberRegistration.Queries
 {
     public class GetApprovedMemberRegInfoQuery : IRequest<ListResult<MemberRegistrationInfoDto>>
     {
@@ -42,7 +42,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
             //.ToPaginatedListAsync(request.pageNo.GetValueOrDefault(), request.pageSize.GetValueOrDefault(), new CancellationToken());
             // 
 
-            var data = await _context.MemberRegistrationInfos.Where(x => x.IsApproved  && x.IsActive &&
+            var data = await _context.MemberRegistrationInfos.Where(x => x.IsApproved && x.IsActive &&
            (!string.IsNullOrEmpty(request.SearchText) ? x.Name!.ToLower().Contains(request.SearchText.ToLower()) : true)).OrderByDescending(o => o.Id)
                .ToPaginatedListAsync(request.PageNo, request.PageSize, cancellationToken);
 

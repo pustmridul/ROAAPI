@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResApp.Application.Com.Queries.ROSubcriptionPaymentReport
+namespace ResApp.Application.ROA.RoaSubcription.Queries
 {
     public class GetRoSubscriptionPaymentQuery : IRequest<Result<PaymentReport>>
     {
@@ -33,14 +33,14 @@ namespace ResApp.Application.Com.Queries.ROSubcriptionPaymentReport
             {
                 var result = new Result<PaymentReport>()
                 {
-                    Data= new PaymentReport
+                    Data = new PaymentReport
                     {
-                        PaymentDetails= new List<MemberSubPaymentRes>()
+                        PaymentDetails = new List<MemberSubPaymentRes>()
                     }
                 };
 
-               
-         
+
+
 
                 var data = await _context.ROASubscriptionPayments
                     .Include(i => i.Member)
@@ -57,9 +57,9 @@ namespace ResApp.Application.Com.Queries.ROSubcriptionPaymentReport
                 }
 
                 // Extract SubscriptionMonths
-                var allMonths = await _context.ROASubscriptionPaymentDetail.Where(x=> x.PaymentNo == request.PaymentNo)
+                var allMonths = await _context.ROASubscriptionPaymentDetail.Where(x => x.PaymentNo == request.PaymentNo)
                                     .OrderBy(d => d.SubscriptionMonth) // Order by SubscriptionMonth ASC
-                                   // .Select(d => d.SubscriptionMonth)
+                                                                       // .Select(d => d.SubscriptionMonth)
                                     .ToListAsync();
 
                 if (allMonths.Count > 1)
@@ -72,7 +72,7 @@ namespace ResApp.Application.Com.Queries.ROSubcriptionPaymentReport
                 if (allMonths.Count == 1)
                 {
                     var firstMonth = allMonths.FirstOrDefault(); // First (Earliest)
-                   // var lastMonth = allMonths.LastOrDefault(); // Last (Latest)
+                                                                 // var lastMonth = allMonths.LastOrDefault(); // Last (Latest)
                     result.Data.SubscriptionDetails = firstMonth!.SubscriptionMonth.ToString("MMMM, yyyy");
                 }
 
@@ -93,20 +93,20 @@ namespace ResApp.Application.Com.Queries.ROSubcriptionPaymentReport
                     PaymentNo = s.PaymentNo,
                     MemberShipNo = s.MemberShipNo!,
                     MemberName = s.Member?.Name,
-                 //   TotalPaymentAmount = s.TotalAmount,// data.Sum(s1 => s1.TotalAmount), // + data.Sum(s2 => s2.LateAmount),
+                    //   TotalPaymentAmount = s.TotalAmount,// data.Sum(s1 => s1.TotalAmount), // + data.Sum(s2 => s2.LateAmount),
                     ActualPaymentDate = s.ActualPaymentDate,
 
 
-                   // PaymentYear = s. ?? "",
-                 //   SubscriptionDetails= firstMonth.ToString("MMMM yyyy") + "-" + lastMonth.ToString("MMMM yyyy"),
-                  //  SubscriptionMonth=s
+                    // PaymentYear = s. ?? "",
+                    //   SubscriptionDetails= firstMonth.ToString("MMMM yyyy") + "-" + lastMonth.ToString("MMMM yyyy"),
+                    //  SubscriptionMonth=s
                     SubscriptionName = s.SubscriptionName,
                     SubscriptionMonth = s.SubscriptionMonth,
                     SubscriptionYear = s.SubscriptionYear,
                     PaymentAmount = s.PaymentFees,
                     LateAmount = s.LateFees,// s.LateAmount,
-                   // LateFePer = 0,// s.LateFeePer,
-                 //   IsChecked = s.IsPaid,
+                                            // LateFePer = 0,// s.LateFeePer,
+                                            //   IsChecked = s.IsPaid,
 
 
 

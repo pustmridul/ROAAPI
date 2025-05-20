@@ -59,7 +59,7 @@ namespace MemApp.Application.Services
                 sb = new StringBuilder();
                 sb.AppendLine("select Count(*) AS UserName from Logs");
                 var datacount = await connection.QueryAsync<UserLogReq>(sb.ToString());
-                result.DataCount = Convert.ToInt32(datacount.FirstOrDefault().UserName);
+                result.DataCount = Convert.ToInt32(datacount.FirstOrDefault()!.UserName);
                 result.DataList = data.ToList();
             }
               return result;
@@ -85,7 +85,7 @@ namespace MemApp.Application.Services
                 sb= new StringBuilder();
                 sb.AppendLine("select Count(*) AS UserName from Logs WHERE CAST(CAST(Properties AS XML).value('(/properties/property[@key=\"UserId\"]/text())[1]', 'NVARCHAR(MAX)') AS INT) =@UserId");
                 var datacount= await connection.QueryAsync<UserLogReq>(sb.ToString(), new { UserId = userId });
-                result.DataCount = Convert.ToInt32(datacount.FirstOrDefault().UserName);
+                result.DataCount = Convert.ToInt32(datacount.FirstOrDefault()!.UserName);
                 result.DataList = data.ToList();
             }
            

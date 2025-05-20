@@ -60,11 +60,11 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
         if (refuser is null || refuser.RefToken != refreshToken || refuser.Expires <= DateTime.Now)
             return BadRequestException("Invalid client request");
 
-        UserProfile userProfile = new UserProfile()
+        UserProfile userProfile = new()
         {
-            Id = user.Id,
+            Id = user!.Id,
             Name = user.Name,
-            UserName = user.UserName,
+            UserName = user.UserName!,
             EmailConfirmed = user.EmailConfirmed,
             EmailId = user.EmailId,
             AppId = user.AppId,
@@ -73,7 +73,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
             MemberId = user.MemberId,
         };
 
-        var jwtSecurityToken = await _tokenService.GenerateJWToken(userProfile, request.IpAddress, request.AppId);
+        var jwtSecurityToken = await _tokenService.GenerateJWToken(userProfile, request.IpAddress!, request.AppId!);
 
         var response = new TokenResponse();
 
@@ -82,12 +82,12 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
         response.IssuedOn = jwtSecurityToken.ValidFrom.ToLocalTime();
         response.ExpiresOn = jwtSecurityToken.ValidTo.ToLocalTime();
         response.Email = user.EmailId ?? "";
-        response.UserName = user.UserName;
+        response.UserName = user.UserName!;
         //var rolesList = await _context.UserRoleMaps.Include(i => i.Role).Where(q => q.UserId == user.Id)
         //    .Select(s => s.Role.Name).ToListAsync(cancellationToken);
         //response.Roles = rolesList.ToList();
         response.IsVerified = user.EmailConfirmed ?? true;
-        var newRefreshToken = _tokenService.GenerateRefreshToken(request.IpAddress, request.AppId);
+        var newRefreshToken = _tokenService.GenerateRefreshToken(request.IpAddress!, request.AppId!);
         response.RefreshToken = newRefreshToken.Token;
 
 
@@ -108,7 +108,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
         }
         obj.Token = response.JWToken;
         obj.RefToken = newRefreshToken.Token;
-        obj.CreatedByIp = request.IpAddress;
+        obj.CreatedByIp = request.IpAddress!;
         obj.Expires = DateTime.Now.AddYears(15);
 
         user.LastLoginDate = DateTime.Now;
@@ -134,7 +134,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
                 Model = new Models.UserConferenceReq()
                 {
                     UserId = user.Id,
-                    UserName = user.UserName,
+                    UserName = user.UserName!,
                     UserToken = obj.Token,
                     UserRefToken = obj.RefToken,
                     IpAddress = request.IpAddress,

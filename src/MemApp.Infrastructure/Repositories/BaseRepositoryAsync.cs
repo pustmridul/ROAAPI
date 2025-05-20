@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MemApp.Domain.Core.Specifications;
 using MemApp.Domain.Core.Models;
 using MemApp.Application.Core.Repositories;
+using Res.Infrastructure.Repositories;
 
 namespace MemApp.Infrastructure.Repositories
 {

@@ -66,7 +66,7 @@ namespace MemApp.Application.App.Commands
                 throw new LoginFailedException();
 
             }
-            UserProfile userProfile = new UserProfile()
+            UserProfile userProfile = new()
             {
                 Id = user.Id,
                 Name = user.Name,
@@ -75,7 +75,7 @@ namespace MemApp.Application.App.Commands
                 AppId = user.AppId,
                 Roles = await _context.UserRoleMaps.Distinct().Where(q => q.UserId == user.Id && q.IsActive).Select(s => s.RoleId).ToListAsync(cancellationToken),
                 PhoneNo = user.PhoneNo ?? "",
-                UserName = user.UserName,
+                UserName = user.UserName!,
                 MemberId = user.MemberId,
             };
             var jwtSecurityToken = await _tokenService.GenerateJWToken(userProfile, request.Model.IpAddress, request.Model.AppId);
@@ -86,7 +86,7 @@ namespace MemApp.Application.App.Commands
             response.IssuedOn = jwtSecurityToken.ValidFrom.ToLocalTime();
             response.ExpiresOn = jwtSecurityToken.ValidTo.ToLocalTime();
             response.Email = user.EmailId ?? "";
-            response.UserName = user.UserName;
+            response.UserName = user.UserName!;
             //var rolesList = await _context.UserRoleMaps.Include(i => i.Role).Where(q => q.UserId == user.Id)
             //    .Select(s => s.Role.Id).ToListAsync(cancellationToken);
             //response.Roles = rolesList.ToList();
@@ -163,7 +163,7 @@ namespace MemApp.Application.App.Commands
                 Model = new UserConferenceReq()
                 {
                     UserId = user.Id,
-                    UserName = user.UserName,
+                    UserName = user.UserName!,
                     UserRefToken = refuser.RefToken,
                     UserToken = refuser.Token,
                     IpAddress = request.Model.IpAddress,

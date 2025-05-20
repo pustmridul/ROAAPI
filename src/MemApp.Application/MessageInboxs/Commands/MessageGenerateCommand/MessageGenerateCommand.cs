@@ -68,7 +68,7 @@ public class MessageGenerateCommandHandler : IRequestHandler<MessageGenerateComm
                 obj.Message = request.Model.Message;
                 obj.TypeId = request.Model.TypeId;
                 obj.Title = GetEnumNameWithSpaces((MessageInboxTypeEnum)request.Model.TypeId);
-                obj.MemberId= (int)request.Model.MemberId;
+                obj.MemberId= (int)request.Model.MemberId!;
                 _context.MessageInboxs.Add(obj);
 
             }

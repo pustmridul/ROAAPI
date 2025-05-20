@@ -1,12 +1,11 @@
 ﻿using MediatR;
-using MemApp.Application.Com.Models;
-using MemApp.Application.com.Queries.GetAllPaymentMethods;
 using MemApp.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MemApp.Application.Mem.Transactions.Queries;
+using MemApp.WebApi.Controllers;
 
-namespace MemApp.WebApi.Controllers
+namespace Res.WebApi.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [Route("api/[controller]/[action]")]
@@ -14,15 +13,15 @@ namespace MemApp.WebApi.Controllers
     public class DashboardController : ApiControllerBase
     {
         private readonly IDashboardService _dashboardService;
-        public DashboardController(IDashboardService dashboardService, ISender sender) : base(sender) 
+        public DashboardController(IDashboardService dashboardService, ISender sender) : base(sender)
         {
-             _dashboardService = dashboardService;
+            _dashboardService = dashboardService;
         }
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> GetUserConferenceData(int PageNo , int PageSize)
+        public async Task<ActionResult> GetUserConferenceData(int PageNo, int PageSize)
         {
-            var result =  await _dashboardService.GetUserConferenceData( PageNo,  PageSize);
+            var result = await _dashboardService.GetUserConferenceData(PageNo, PageSize);
             return Ok(result);
         }
         [Authorize]
@@ -39,7 +38,7 @@ namespace MemApp.WebApi.Controllers
             var result = await _dashboardService.GetEventTicketSaleInfo();
             return Ok(result);
         }
-       // [Authorize]
+        // [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetYearlyIncomeData()
         {
@@ -50,7 +49,7 @@ namespace MemApp.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllTransactionData([FromQuery] GetAllTransactionQuery query)
         {
-            return Ok( await Mediator.Send(query));
+            return Ok(await Mediator.Send(query));
         }
     }
 }

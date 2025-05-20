@@ -3,7 +3,6 @@ using MemApp.Reporting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResApp.Application.ROA.RoaSubcription.Queries;
-using ResApp.Application.Com.Queries.ROSubcriptionPaymentReport;
 using System.Data;
 using ResApp.Application.ROA.RoaSubcription.Command;
 using ResApp.Application.ROA.SubscriptionPayment.Models;

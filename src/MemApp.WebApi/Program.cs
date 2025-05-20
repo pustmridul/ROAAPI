@@ -16,6 +16,7 @@ using RabbitMQ.Client;
 using Res.WebApi.Extensions;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
@@ -64,7 +65,6 @@ builder.Services.AddHostedService<MonthlySyncService>();
 
 builder.Services.AddHangfire(configuration => configuration
                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-               .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                .UseSimpleAssemblyNameTypeSerializer()
                .UseDefaultTypeSerializer()
                .UseSqlServerStorage(builder.Configuration.GetConnectionString("ApplicationConnection"), new SqlServerStorageOptions
@@ -96,7 +96,7 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader());
 });
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
 
 builder.Services.AddAuthorization(o =>
 {
@@ -122,6 +122,23 @@ builder.Services.AddAuthorization(o =>
 
 builder.Services.AddEndpointsApiExplorer();
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.MSSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("ApplicationConnection"),
+        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = true },
+        restrictedToMinimumLevel: LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+
+//Log.Logger = new LoggerConfiguration()
+//   .WriteTo.MSSqlServer(
+//              connectionString: appSettings.GetConnectionString("ApplicationConnection"),
+//              tableName: "Logs",
+//              autoCreateSqlTable: true,
+//              restrictedToMinimumLevel: LogEventLevel.Information).Enrich.FromLogContext()
+//          .CreateLogger();
+
 var app = builder.Build();
 
 
@@ -130,6 +147,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+
+    app.UseSwaggerUI(c =>
+    {
+        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+    });
 }
 
 
@@ -139,12 +161,7 @@ app.UseMiddleware<CustomExceptionHandlerMiddleware>();
 
 
 
-app.UseSwaggerUI(c =>
-{
-    c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-});
 
-app.UseRouting();
 
 app.UseCors(x => x
                .AllowAnyMethod()
@@ -154,6 +171,10 @@ app.UseCors(x => x
 
 app.UseCors("AllowSpecificOrigin"); // Use CORS policy
 
+app.UseRouting();
+
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<NotificationHub>("/hub");
@@ -161,12 +182,6 @@ app.MapHub<NotificationHub>("/hub");
 app.UseStaticFiles();
 app.MapControllers();
 
-Log.Logger = new LoggerConfiguration()
-   .WriteTo.MSSqlServer(
-              connectionString: appSettings.GetConnectionString("ApplicationConnection"),
-              tableName: "Logs",
-              autoCreateSqlTable: true,
-              restrictedToMinimumLevel: LogEventLevel.Information).Enrich.FromLogContext()
-          .CreateLogger();
+
 app.Run();
 

@@ -18,7 +18,7 @@ using Serilog;
 using System.Data;
 using System.Globalization;
 
-namespace MemApp.WebApi.Controllers.v1
+namespace Res.WebApi.Controllers.v1
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -48,7 +48,7 @@ namespace MemApp.WebApi.Controllers.v1
             model.APIConnect = Request.Form["APIConnect"];
             model.status = Request.Form["status"];
             model.sessionkey = Request.Form["sessionkey"];
-            model.tran_date = DateTime.Parse(Request.Form["tran_date"]);
+            model.tran_date = DateTime.Parse(Request.Form["tran_date"]!);
             model.tran_id = Request.Form["tran_id"];
             model.val_id = Request.Form["val_id"];
             model.amount = Convert.ToDecimal(Request.Form["amount"]);
@@ -81,16 +81,16 @@ namespace MemApp.WebApi.Controllers.v1
             {
                 return BadRequest();
             }
-             var paymentNo= result.Messages[1].ToString();
-             var paymentFor= result.Messages[2].ToString();
+            var paymentNo = result.Messages[1].ToString();
+            var paymentFor = result.Messages[2].ToString();
             //  var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
-            var redirectUrl = $"http://36.255.71.72:177/member_topup?paymentNo={paymentNo}&paymentFor={paymentFor}";
+            var redirectUrl = $"http://36.255.71.72:177/member_topup_success?paymentNo={paymentNo}&paymentFor={paymentFor}";
             // $"?paymentNo={paymentNo}";
             Response.Headers["Location"] = redirectUrl;
             return StatusCode(302);  // This forces a direct redirect
-          //  return Redirect(redirectUrl);
+                                     //  return Redirect(redirectUrl);
 
-           // return Ok(result);
+            // return Ok(result);
         }
 
 
@@ -103,7 +103,7 @@ namespace MemApp.WebApi.Controllers.v1
             model.APIConnect = Request.Form["APIConnect"];
             model.status = Request.Form["status"];
             model.sessionkey = Request.Form["sessionkey"];
-            model.tran_date = DateTime.Parse(Request.Form["tran_date"]);
+            model.tran_date = DateTime.Parse(Request.Form["tran_date"]!);
             model.tran_id = Request.Form["tran_id"];
             model.val_id = Request.Form["val_id"];
             model.amount = Convert.ToDecimal(Request.Form["amount"]);
@@ -135,15 +135,15 @@ namespace MemApp.WebApi.Controllers.v1
                 return BadRequest();
             }
 
-              var paymentNo = result.Messages[1].ToString();
-              var paymentFor = result.Messages[2].ToString();
+            var paymentNo = result.Messages[1].ToString();
+            var paymentFor = result.Messages[2].ToString();
             // var redirectUrl = $"http://localhost:4200/#/subscription/payment-success/" + paymentNo;
-            var redirectUrl = $"http://36.255.71.72:177/member_topup?paymentNo={paymentNo}&paymentFor={paymentFor}";
+            var redirectUrl = $"http://36.255.71.72:177/member_topup_success?paymentNo={paymentNo}&paymentFor={paymentFor}";
 
             // $"?paymentNo={paymentNo}";
 
             return Redirect(redirectUrl);
-          //  return Ok(result);
+            //  return Ok(result);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -155,7 +155,7 @@ namespace MemApp.WebApi.Controllers.v1
             model.APIConnect = Request.Form["APIConnect"];
             model.status = Request.Form["status"];
             model.sessionkey = Request.Form["sessionkey"];
-            model.tran_date = DateTime.Parse(Request.Form["tran_date"]);
+            model.tran_date = DateTime.Parse(Request.Form["tran_date"]!);
             model.tran_id = Request.Form["tran_id"];
             model.val_id = Request.Form["val_id"];
             model.amount = Convert.ToDecimal(Request.Form["amount"]);
@@ -189,43 +189,44 @@ namespace MemApp.WebApi.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> CancelPayment()
         {
-            SSLCommerzValidatorResponseReq model = new SSLCommerzValidatorResponseReq();
-
-            model.APIConnect = Request.Form["APIConnect"];
-            model.status = Request.Form["status"];
-            model.sessionkey = Request.Form["sessionkey"];
-            model.tran_date = DateTime.Parse(Request.Form["tran_date"]);
-            model.tran_id = Request.Form["tran_id"];
-            model.val_id = Request.Form["val_id"];
-            model.amount = Convert.ToDecimal(Request.Form["amount"]);
-            model.store_amount = Convert.ToDecimal(Request.Form["store_amount"]);
-            model.card_type = Request.Form["card_type"];
-            model.card_no = Request.Form["card_no"];
-            model.currency = Request.Form["currency"];
-            model.bank_tran_id = Request.Form["bank_tran_id"];
-            model.card_issuer = Request.Form["card_issuer"];
-            model.card_brand = Request.Form["card_brand"];
-            model.card_issuer_country = Request.Form["card_issuer_country"];
-            model.card_issuer_country_code = Request.Form["card_issuer_country_code"];
-            model.currency_type = Request.Form["currency_type"];
-            model.currency_amount = Convert.ToDecimal(Request.Form["currency_amount"]);
-            model.emi_instalment = Convert.ToInt32(Request.Form["emi_instalment"]);
-            model.emi_amount = Convert.ToDecimal(Request.Form["emi_amount"]);
-            model.discount_percentage = Convert.ToDecimal(Request.Form["discount_percentage"]);
-            model.discount_remarks = Request.Form["discount_remarks"];
-            model.value_a = Request.Form["value_a"];
-            model.value_b = Request.Form["value_b"];
-            model.value_c = Request.Form["value_c"];
-            model.value_d = Request.Form["value_d"];
-            model.risk_level = Convert.ToInt32(Request.Form["risk_level"]);
-            model.risk_title = Request.Form["risk_title"];
+            SSLCommerzValidatorResponseReq model = new()
+            {
+                APIConnect = Request.Form["APIConnect"],
+                status = Request.Form["status"],
+                sessionkey = Request.Form["sessionkey"],
+                tran_date = DateTime.Parse(Request.Form["tran_date"]!),
+                tran_id = Request.Form["tran_id"],
+                val_id = Request.Form["val_id"],
+                amount = Convert.ToDecimal(Request.Form["amount"]),
+                store_amount = Convert.ToDecimal(Request.Form["store_amount"]),
+                card_type = Request.Form["card_type"],
+                card_no = Request.Form["card_no"],
+                currency = Request.Form["currency"],
+                bank_tran_id = Request.Form["bank_tran_id"],
+                card_issuer = Request.Form["card_issuer"],
+                card_brand = Request.Form["card_brand"],
+                card_issuer_country = Request.Form["card_issuer_country"],
+                card_issuer_country_code = Request.Form["card_issuer_country_code"],
+                currency_type = Request.Form["currency_type"],
+                currency_amount = Convert.ToDecimal(Request.Form["currency_amount"]),
+                emi_instalment = Convert.ToInt32(Request.Form["emi_instalment"]),
+                emi_amount = Convert.ToDecimal(Request.Form["emi_amount"]),
+                discount_percentage = Convert.ToDecimal(Request.Form["discount_percentage"]),
+                discount_remarks = Request.Form["discount_remarks"],
+                value_a = Request.Form["value_a"],
+                value_b = Request.Form["value_b"],
+                value_c = Request.Form["value_c"],
+                value_d = Request.Form["value_d"],
+                risk_level = Convert.ToInt32(Request.Form["risk_level"]),
+                risk_title = Request.Form["risk_title"]
+            };
 
             Log.Information("TopUp Cancel : " + JsonConvert.SerializeObject(model));
             var result = await Mediator.Send(new CreateOrderCancelCommand() { Model = model });
             return Ok(result);
         }
 
-       
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PaymentInitiate(SSLCommerzInitRequest model)
@@ -343,7 +344,7 @@ namespace MemApp.WebApi.Controllers.v1
             DataRow masterRow;
             masterRow = masterDataTable.NewRow();
 
-            masterRow["SiteLogo"] = StaticData.ImageConvertToBase64(this._webHostEnvironment.WebRootPath + "\\Image\\sitelogo.png");
+            masterRow["SiteLogo"] = StaticData.ImageConvertToBase64(_webHostEnvironment.WebRootPath + "\\Image\\sitelogo.png");
 
 
             masterRow["SiteTitle"] = StaticData.SiteTitle;
@@ -368,14 +369,14 @@ namespace MemApp.WebApi.Controllers.v1
             data.Add("master", masterDataTable);
 
 
-            var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpDetail" + ".rdlc";
+            var path = $"{_webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpDetail" + ".rdlc";
             ReportDomain reportDomain = new("PDF", data, path, null);
-            return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + extension);
+            return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, Guid.NewGuid().ToString() + "." + extension);
         }
         [HttpGet]
         public async Task<FileResult> ExportTopUpSummaryReport([FromQuery] CommonCriteria model)
         {
-            
+
             Dictionary<string, DataTable> data = new();
             var masterDataTable = new DataTable();
 
@@ -387,7 +388,7 @@ namespace MemApp.WebApi.Controllers.v1
             DataRow masterRow;
             masterRow = masterDataTable.NewRow();
 
-            masterRow["SiteLogo"] = StaticData.ImageConvertToBase64(this._webHostEnvironment.WebRootPath + "\\Image\\sitelogo.png");
+            masterRow["SiteLogo"] = StaticData.ImageConvertToBase64(_webHostEnvironment.WebRootPath + "\\Image\\sitelogo.png");
 
 
             masterRow["SiteTitle"] = StaticData.SiteTitle;
@@ -410,10 +411,10 @@ namespace MemApp.WebApi.Controllers.v1
 
             data.Add("ds", dt);
             data.Add("master", masterDataTable);
-            var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpSummary" + ".rdlc";
+            var path = $"{_webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpSummary" + ".rdlc";
             //var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpDetail" + ".rdlc";
             ReportDomain reportDomain = new("PDF", data, path, null!);
-            return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + extension);
+            return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, Guid.NewGuid().ToString() + "." + extension);
         }
 
         [Authorize]
@@ -463,13 +464,14 @@ namespace MemApp.WebApi.Controllers.v1
                 dataTable.Rows.Add(row);
             }
 
-            Dictionary<string, DataTable> data = new();
-
-            data.Add("ds", dataTable);
-            var path = $"{this._webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpReport" + ".rdlc";
+            Dictionary<string, DataTable> data = new()
+            {
+                { "ds", dataTable }
+            };
+            var path = $"{_webHostEnvironment.WebRootPath}\\RDLC\\" + "TopUpReport" + ".rdlc";
 
             ReportDomain reportDomain = new("PDF", data, path, null!);
-            return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, System.Guid.NewGuid().ToString() + "." + "PDF");
+            return File(new ReportApplication().Load(reportDomain), reportDomain.mimeType, Guid.NewGuid().ToString() + "." + "PDF");
 
 
         }

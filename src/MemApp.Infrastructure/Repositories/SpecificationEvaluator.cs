@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MemApp.Domain.Core.Specifications;
 using MemApp.Domain.Core.Models;
 
-namespace MemApp.Infrastructure.Repositories
+namespace Res.Infrastructure.Repositories
 {
     public class SpecificationEvaluator<T> where T : BaseEntity
     {

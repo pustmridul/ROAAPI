@@ -177,8 +177,8 @@ namespace ResApp.Application.Com.Commands.RoTopUp
                         {
                             string preFix = "T";
                             var topUpNo = "";
-                            var max = _context.MemLedgers.Where(q => q.TOPUPID.StartsWith(preFix))
-                                .Select(s => s.TOPUPID.Replace(preFix, "")).DefaultIfEmpty().Max();
+                            var max = _context.MemLedgers.Where(q => q.TOPUPID!.StartsWith(preFix))
+                                .Select(s => s.TOPUPID!.Replace(preFix, "")).DefaultIfEmpty().Max();
 
                             if (string.IsNullOrEmpty(max))
                             {
@@ -193,10 +193,10 @@ namespace ResApp.Application.Com.Commands.RoTopUp
                             var lObj = new RoMemberLedger()
                             {
                                 ReferenceId = topUpNo,
-                              //  PrvCusID = obj.RegisterMemberId.ToString(),
+                                //  PrvCusID = obj.RegisterMemberId.ToString(),
                                 MemberId = obj.MemberId.ToString(),
                                 Amount = d.Amount,
-                               // Description = "TOP UP By : Member Ship No :" + request.Model.MemberShipNo + ", Card No : " + cardNo,
+                                // Description = "TOP UP By : Member Ship No :" + request.Model.MemberShipNo + ", Card No : " + cardNo,
                                 Description = "Subscription fee Details : " + request.MonthCount + " Months, " + request.StartingMonth.ToString("MMMM, yyyyy") + " To  " +
                                                            request.EndingMonth.ToString("MMMM, yyyy"),
                                 Dates = DateTime.Now,

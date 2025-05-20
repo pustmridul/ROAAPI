@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Res.Domain.Entities;
 using ResApp.Application.ROA.MembershipFee.Models;
+using AutoMapper.Execution;
 
 namespace ResApp.Application.ROA.MembershipFee.Command
 {
@@ -55,11 +56,34 @@ namespace ResApp.Application.ROA.MembershipFee.Command
                 Data = new MembershipFeePymentRes()
             };
 
+            var memberObj=_context.MemberRegistrationInfos.FirstOrDefault(x=>x.Id==request.Model.MemberId);
+
+            if (memberObj == null)
+            {
+                result.HasError = true;
+                result.Messages?.Add("Member Not found!!");
+                return result;
+            }
+
+            if (!memberObj.IsApproved)
+            {
+                result.HasError = true;
+                result.Messages?.Add("Member is not approved yet!!");
+                return result;
+            }
+
             var exist = _context.ROAMembershipFeePayments.Any(x => x.MemberId == request.Model.MemberId);
             if (exist)
             {
                 result.HasError = true;
                 result.Messages?.Add("Member Fee has been paid already!!");
+                return result;
+            }
+
+            if (memberObj.MembershipFee != request.Model.Amount)
+            {
+                result.HasError = true;
+                result.Messages?.Add("Please set the right amount!!");
                 return result;
             }
 
@@ -83,20 +107,20 @@ namespace ResApp.Application.ROA.MembershipFee.Command
                         lastPayemntNo = "00000001";
                     }
 
-                    var member = await _context.MemberRegistrationInfos.SingleOrDefaultAsync(q => q.Id == request.Model.MemberId, cancellation);
+                    //var member = await _context.MemberRegistrationInfos.SingleOrDefaultAsync(q => q.Id == request.Model.MemberId, cancellation);
 
-                    if (member == null)
-                    {
-                        result.HasError = true;
-                        result.Messages?.Add("Member not found");
-                        return result;
-                    }
-                    if (!member.IsApproved)
-                    {
-                        result.HasError = true;
-                        result.Messages?.Add("Member is not approved yet!!");
-                        return result;
-                    }
+                    //if (member == null)
+                    //{
+                    //    result.HasError = true;
+                    //    result.Messages?.Add("Member not found");
+                    //    return result;
+                    //}
+                    //if (!member.IsApproved)
+                    //{
+                    //    result.HasError = true;
+                    //    result.Messages?.Add("Member is not approved yet!!");
+                    //    return result;
+                    //}
 
 
 
@@ -108,10 +132,6 @@ namespace ResApp.Application.ROA.MembershipFee.Command
                         PaymentNo = lastPayemntNo,
 
                         PaymentDate = DateTime.Now,
-
-
-
-
                     };
 
                     _context.ROAMembershipFeePayments.Add(payemnt);
@@ -121,7 +141,7 @@ namespace ResApp.Application.ROA.MembershipFee.Command
                     {
                         var memLedger = new RoMemberLedger()
                         {
-                            MemberId = member.Id.ToString(),
+                            MemberId = memberObj.Id.ToString(),
                             ReferenceId = lastPayemntNo,
                             Amount = request.Model.Amount, // Math.Round((-1) * (pay.PaymentAmount + pay.LateAmount), 2),
                             Dates = DateTime.Now,

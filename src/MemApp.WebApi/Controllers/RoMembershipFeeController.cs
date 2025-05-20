@@ -6,7 +6,6 @@ using System.Data;
 using ResApp.Application.ROA.MembershipFee.Models;
 using ResApp.Application.ROA.MembershipFee.Command;
 using ResApp.Application.ROA.MembershipFee.Queries;
-using ResApp.Application.ROA.SubscriptionPayment.Queries;
 
 namespace Res.WebApi.Controllers
 {

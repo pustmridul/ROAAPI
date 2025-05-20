@@ -20,7 +20,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 
 
-namespace MemApp.Application.App.Commands
+namespace ResApp.Application.App.Commands
 {
     public class ResMemberLoginCommand : IRequest<Result<ResMemberLoginDto>>
     {
@@ -43,7 +43,7 @@ namespace MemApp.Application.App.Commands
         private readonly ITokenService _tokenService;
         private readonly JWTSettings _jwtSettings;
 
-        public ResMemberLoginCommandHandler(IMemDbContext context, IPasswordHash passwordHash,IPasswordNewHash passwordNewHash,
+        public ResMemberLoginCommandHandler(IMemDbContext context, IPasswordHash passwordHash, IPasswordNewHash passwordNewHash,
                                             IMediator mediator, ITokenService tokenService, IOptions<JWTSettings> jwtSettings)
         {
             _context = context;
@@ -58,26 +58,26 @@ namespace MemApp.Application.App.Commands
         {
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(q => (q.EmailId == request.Email) , cancellationToken);
+                .FirstOrDefaultAsync(q => q.EmailId == request.Email, cancellationToken);
 
             if (user == null)
                 throw new LoginFailedException();
 
             var member = await _context.MemberRegistrationInfos
-              // .Include(i => i.MemberTypes)
-             //  .Include(i => i.MemberStatus)
-             //  .Include(i => i.MemberActiveStatus)
+               // .Include(i => i.MemberTypes)
+               //  .Include(i => i.MemberStatus)
+               //  .Include(i => i.MemberActiveStatus)
                .SingleOrDefaultAsync(q => q.Email == request.Email, cancellationToken);
             if (member == null)
                 throw new LoginFailedException();
-            
+
             bool isLoginValid;
             bool isLoginValidOld;
 
-          //   isLoginValid = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash ?? "", user?.PasswordSalt ?? "");
+            //   isLoginValid = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash ?? "", user?.PasswordSalt ?? "");
 
-            isLoginValid = _passwordNewHash.ValidatePassword(request.Password, user?.PasswordHash??"", user?.PasswordSalt??"");
-            isLoginValidOld = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash??"", user?.PasswordSalt??"");
+            isLoginValid = _passwordNewHash.ValidatePassword(request.Password, user?.PasswordHash ?? "", user?.PasswordSalt ?? "");
+            isLoginValidOld = _passwordHash.ValidatePassword(request.Password, user?.PasswordHash ?? "", user?.PasswordSalt ?? "");
 
             if (!isLoginValid)
 
@@ -94,26 +94,26 @@ namespace MemApp.Application.App.Commands
                     string newPasswordHash = string.Empty;
                     string newPasswordSaltHash = string.Empty;
 
-                 
+
 
                     _passwordNewHash.CreateHash(request.Password, ref newPasswordHash,
                       ref newPasswordSaltHash);
 
-                 
+
                     user!.PasswordHash = newPasswordHash;
                     user.PasswordSalt = newPasswordSaltHash;
 
-                    
-                        member.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
-                        member.PasswordHash = newPasswordHash;
-                        member.PasswordSalt = newPasswordSaltHash;
 
-                        _context.MemberRegistrationInfos.Update(member);
-                    
+                    member.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
+                    member.PasswordHash = newPasswordHash;
+                    member.PasswordSalt = newPasswordSaltHash;
+
+                    _context.MemberRegistrationInfos.Update(member);
+
 
                     _context.Users.Update(user);
                 }
-                
+
 
             }
             UserProfile userProfile = new UserProfile()
@@ -132,14 +132,14 @@ namespace MemApp.Application.App.Commands
             // var response = new MemberLoginVm();
             var response = new Result<ResMemberLoginDto>
             {
-                Data=new ResMemberLoginDto()
+                Data = new ResMemberLoginDto()
             };
 
             response.Data.UserId = user.Id.ToString();
             response.Data.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             response.Data.IssuedOn = jwtSecurityToken.ValidFrom.ToLocalTime();
             response.Data.ExpiresOn = jwtSecurityToken.ValidTo.ToLocalTime();
-            response.Data.Email = user.EmailId! ;
+            response.Data.Email = user.EmailId!;
             response.Data.UserName = user.UserName!;
             //var rolesList = await _context.UserRoleMaps.Include(i => i.Role).Where(q => q.UserId == user.Id)
             //    .Select(s => s.Role.Id).ToListAsync(cancellationToken);
@@ -225,7 +225,7 @@ namespace MemApp.Application.App.Commands
                     response.Data.MemberInfo.TinImgPath = member.TinImgPath;
                     response.Data.MemberInfo.TradeLicenseImgPath = member.TradeLicenseImgPath;
 
-                    
+
                 }
             }
             catch (Exception ex)
@@ -248,7 +248,7 @@ namespace MemApp.Application.App.Commands
             return response;
         }
 
-       
+
     }
 
 }

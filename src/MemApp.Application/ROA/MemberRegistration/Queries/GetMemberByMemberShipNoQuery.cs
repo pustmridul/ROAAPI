@@ -10,18 +10,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
+namespace ResApp.Application.ROA.MemberRegistration.Queries
 {
     public class GetMemberByMemberShipNoQuery : IRequest<Result<MemberRegistrationInfoDto>>
     {
-        public string MemberShipNo {  get; set; }
+        public string MemberShipNo { get; set; }
     }
 
     public class GetMemberByMemberShipNoQueryHandler : IRequestHandler<GetMemberByMemberShipNoQuery, Result<MemberRegistrationInfoDto>>
     {
         private readonly IMemDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public GetMemberByMemberShipNoQueryHandler(IMemDbContext context,   IHttpContextAccessor httpContextAccessor)
+        public GetMemberByMemberShipNoQueryHandler(IMemDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -32,7 +32,7 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
             var result = new Result<MemberRegistrationInfoDto>();
             string baseUrl = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host + _httpContextAccessor.HttpContext.Request.PathBase;
             var data = await _context.MemberRegistrationInfos.
-                Where(x=> x.MemberShipNo== request.MemberShipNo).FirstOrDefaultAsync(cancellationToken);
+                Where(x => x.MemberShipNo == request.MemberShipNo).FirstOrDefaultAsync(cancellationToken);
 
             if (data == null)
             {
@@ -42,12 +42,12 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
             else
             {
                 result.HasError = false;
-               // result.Data = data;
+                // result.Data = data;
                 result.Data = new MemberRegistrationInfoDto
                 {
                     Id = data.Id,
                     ApplicationNo = data.ApplicationNo,
-                    MemberShipNo=data.MemberShipNo,
+                    MemberShipNo = data.MemberShipNo,
                     PermanentAddress = data.PermanentAddress,
                     IsApproved = data.IsApproved,
                     BusinessStartingDate = data.BusinessStartingDate,
@@ -61,8 +61,8 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     MemberTINNo = data.MemberTINNo,
                     MemberTradeLicense = data.MemberTradeLicense,
                     Name = data.Name,
-                    ProfileImgPath=data.ImgPath == null ? baseUrl + "/uploadsMembers/test.png" : baseUrl + "/uploadsMembers/" + data.ImgPath,
-                    IsFilled=data.IsFilled,
+                    ProfileImgPath = data.ImgPath == null ? baseUrl + "/uploadsMembers/test.png" : baseUrl + "/uploadsMembers/" + data.ImgPath,
+                    IsFilled = data.IsFilled,
                     //NIDImgPath = data.NIDImgPath,
                     NIDImgPath = data.NIDImgPath == null ? baseUrl + "/uploadsMemberNID/testNID.png" : baseUrl + "/uploadsMemberNID/" + data.NIDImgPath,
                     NomineeName = data.NomineeName,
@@ -78,13 +78,13 @@ namespace ResApp.Application.Com.Queries.GetMemberRegistrationInfo
                     DivisionName = _context.Divisions.Where(x => x.Id == data.DivisionId).FirstOrDefault()!.EnglishName,
                     DistrictName = _context.Districts.Where(x => x.Id == data.DistrictId).FirstOrDefault()!.EnglishName,
                     ThanaName = _context.Thanas.Where(x => x.Id == data.ThanaId).FirstOrDefault()!.EnglishName,
-                    SubscriptionFee=data.SubscriptionFee.GetValueOrDefault(),
-                    MembershipFee =data.MembershipFee.GetValueOrDefault(),
+                    SubscriptionFee = data.SubscriptionFee.GetValueOrDefault(),
+                    MembershipFee = data.MembershipFee.GetValueOrDefault(),
                     SubscriptionStarts = data.SubscriptionStarts,
                     PaidTill = data.PaidTill,
-                    MemberFeePaid=await _context.ROAMembershipFeePayments.AnyAsync(x =>x.MemberId==data.Id, cancellationToken: cancellationToken),
+                    MemberFeePaid = await _context.ROAMembershipFeePayments.AnyAsync(x => x.MemberId == data.Id, cancellationToken: cancellationToken),
                 };
-                
+
             }
 
             return result;

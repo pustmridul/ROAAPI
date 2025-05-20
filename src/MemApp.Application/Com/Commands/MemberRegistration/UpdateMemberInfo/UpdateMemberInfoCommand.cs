@@ -33,7 +33,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
         public string? InstituteNameBengali { get; set; }
         public string? InstituteNameEnglish { get; set; }
         public string? PhoneNo { get; set; }
-        public string? PermenantAddress { get; set; }
+        public string? PermanentAddress { get; set; }
         public string? MemberNID { get; set; }
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }
@@ -410,7 +410,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                     checkUserExist.ApplicationNo = request.ApplicationNo;
                  
-                    checkUserExist.PermanentAddress = request.PermenantAddress;
+                    checkUserExist.PermanentAddress = request.PermanentAddress;
                    
                     checkUserExist.BusinessStartingDate = request.BusinessStartingDate;
                     checkUserExist.DistrictId = request.DistrictId;
