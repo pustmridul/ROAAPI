@@ -8,6 +8,7 @@ using MemApp.Domain.Entities;
 using MemApp.Domain.Entities.mem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Res.Domain.Entities;
 using System.Globalization;
 
 namespace MemApp.Application.Mem.Members.Command

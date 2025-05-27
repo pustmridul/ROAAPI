@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using MemApp.Domain.Entities;
+using Res.Domain.Entities;
 
-namespace MemApp.Infrastructure.Configurations.com;
+namespace Res.Infrastructure.Configurations.com;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
@@ -11,8 +11,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("mem_User");
         builder.HasKey(e => new { e.Id });
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
-        builder.Property(a=>a.UserName).IsRequired().HasMaxLength(100);
+        builder.Property(a => a.UserName).IsRequired().HasMaxLength(100);
         builder.Property(a => a.AppId).IsRequired().HasMaxLength(50);
+
+        builder.HasIndex(e => e.EmailId).IsUnique();
 
 
     }

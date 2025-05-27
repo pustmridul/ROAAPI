@@ -7,6 +7,19 @@ namespace MemApp.Application.Com.Models
     public class UserModel
     {
     }
+
+    public class UserReq
+    {
+        public string Name { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string EmailId { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string PhoneNo { get; set; } = string.Empty;
+        public string AppId { get; set; } = string.Empty;
+        public string? CompanyName { get; set; }
+        public string? TradeLicense { get; set; }
+        public string? UserNID { get; set; }
+    }
     public class UserDto
     {
         public int Id { get; set; }

@@ -11,6 +11,8 @@ public class MemberRegistrationInfoConfiguration : IEntityTypeConfiguration<Memb
         builder.ToTable("MemberRegistrationInfo");
         builder.HasKey(e => new { e.Id });
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
+
+        builder.HasIndex(e => e.MemberNID).IsUnique();
         // builder.Property(a=>a.Title).IsRequired().HasMaxLength(250);
 
         //builder.HasOne(x => x.User)

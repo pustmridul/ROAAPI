@@ -13,10 +13,12 @@ using MemAppWebApi;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RabbitMQ.Client;
-using Res.WebApi.Extensions;
+using ResApp.Application.Com.Commands.CreateUser;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
+using FluentValidation;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
@@ -50,6 +52,12 @@ var appSettings = new ConfigurationBuilder()
 
 builder.Services.AddTransient<SendSelectedMemberLedgerMailCommandHandler>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
+//builder.Services.AddValidatorsFromAssemblyContaining<CreateMemberCommand>();
+
+//builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+
 builder.Services.AddSignalR();
 
 builder.Services.ApplicationRegister();
@@ -64,6 +72,7 @@ builder.Services.AddHostedService<MonthlySyncService>();
 //builder.Services.AddHostedService<DailyEmailService>();
 
 builder.Services.AddHangfire(configuration => configuration
+               .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                .UseSimpleAssemblyNameTypeSerializer()
                .UseDefaultTypeSerializer()

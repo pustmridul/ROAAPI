@@ -10,12 +10,12 @@ using ResApp.Application.ROA.RoaSubcription;
 using ResApp.Application.ROA.RoaSubcription.Command;
 
 
-namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
+namespace ResApp.Application.ROA.MemberRegistration.Command
 {
     public class UpdateMemberInfoCommand : IRequest<Result<MemberRegistrationInfoDto>>
     {
         public int Id { get; set; }
-        public string? UserName {  get; set; }
+        public string? UserName { get; set; }
         public DateTime? CreatedOn { get; set; }
         public int? LastModifiedBy { get; set; }
         public string? LastModifiedByName { get; set; }
@@ -45,7 +45,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
         public bool IsApproved { get; set; }
 
-      //  public virtual User? ApprovedBy { get; set; }
+        //  public virtual User? ApprovedBy { get; set; }
 
         public DateTime? ApproveTime { get; set; }
         public DateTime? SignatureUploadingTime { get; set; }
@@ -74,14 +74,14 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
     public class UpdateMemberInfoCommandHandler : IRequestHandler<UpdateMemberInfoCommand, Result<MemberRegistrationInfoDto>>
     {
         private readonly IMemDbContext _context;
-        private readonly IMediator _mediator;       
+        private readonly IMediator _mediator;
         private readonly IPermissionHandler _permissionHandler;
 
-      //  private readonly IWebHostEnvironment _hostingEnv;
+        //  private readonly IWebHostEnvironment _hostingEnv;
         public UpdateMemberInfoCommandHandler(IMemDbContext context, IMediator mediator, IPermissionHandler permissionHandler)
         {
             _context = context;
-            _mediator = mediator;            
+            _mediator = mediator;
             _permissionHandler = permissionHandler;
         }
 
@@ -90,10 +90,10 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
             var result = new Result<MemberRegistrationInfoDto>();
 
             var checkUserNIDExist = await _context.MemberRegistrationInfos
-               .Where(q => q.MemberNID == request.MemberNID ).ToListAsync();
+               .Where(q => q.MemberNID == request.MemberNID).ToListAsync();
 
             var checkUserExist = await _context.MemberRegistrationInfos
-               .FirstOrDefaultAsync(q =>  q.Id == request.Id);
+               .FirstOrDefaultAsync(q => q.Id == request.Id);
 
             if (checkUserExist == null)
             {
@@ -135,7 +135,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
             //    result.Messages.Add($"Invalid file type detected for: {string.Join(", ", invalidFiles)}. Only Image (.jpg, .jpeg, .png) or PDF (.pdf) files are allowed.");
             //    return result;
             //}
-          //  string ext = Path.GetExtension(request.NIDImgFile!.FileName);
+            //  string ext = Path.GetExtension(request.NIDImgFile!.FileName);
             //string extSign = Path.GetExtension(request.SignatureImgFile!.FileName);
             //string extTrade = Path.GetExtension(request.TradeLicenseImgFile!.FileName);
             //string extTin = Path.GetExtension(request.TinImgFile!.FileName);
@@ -199,7 +199,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                         if (File.Exists(oldFilePath))
                         {
                             // Delete the file
-                            System.IO.File.Delete(oldFilePath);
+                            File.Delete(oldFilePath);
                             //  return Ok(new { message = "File deleted successfully." });
                         }
                         else
@@ -232,21 +232,21 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                         }
                         // Create uploads directory if it doesn't exist
                         string uploadsFolder = Path.Combine(request.WebRootPath!, "uploadsMemberNID");
-                       
+
                         // Generate unique filename
                         string guidPart = Guid.NewGuid().ToString("N").Substring(0, 8);
                         uniqueFileNameNID = nextId + "_" + request.MemberNID + "_" + guidPart + Path.GetExtension(request.NIDImgFile.FileName);
 
                         string filePath = Path.Combine(uploadsFolder, uniqueFileNameNID);
 
-                        string oldFilePath= Path.Combine(uploadsFolder, checkUserExist.NIDImgPath!);
+                        string oldFilePath = Path.Combine(uploadsFolder, checkUserExist.NIDImgPath!);
 
                         // Check if the file exists
                         if (File.Exists(oldFilePath))
                         {
                             // Delete the file
-                            System.IO.File.Delete(oldFilePath);
-                          //  return Ok(new { message = "File deleted successfully." });
+                            File.Delete(oldFilePath);
+                            //  return Ok(new { message = "File deleted successfully." });
                         }
                         else
                         {
@@ -286,7 +286,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                         if (File.Exists(oldFilePath))
                         {
                             // Delete the file
-                            System.IO.File.Delete(oldFilePath);
+                            File.Delete(oldFilePath);
                             //  return Ok(new { message = "File deleted successfully." });
                         }
                         else
@@ -336,7 +336,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                         if (File.Exists(oldFilePath))
                         {
                             // Delete the file
-                            System.IO.File.Delete(oldFilePath);
+                            File.Delete(oldFilePath);
                             //  return Ok(new { message = "File deleted successfully." });
                         }
                         else
@@ -354,7 +354,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                         }
 
                         checkUserExist.SignatureImgPath = uniqueFileNameSign;
-                        checkUserExist.SignatureUploadingTime=DateTime.UtcNow;
+                        checkUserExist.SignatureUploadingTime = DateTime.UtcNow;
                     }
 
                     if (request.TradeLicenseImgFile != null)
@@ -387,7 +387,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                         if (File.Exists(oldFilePath))
                         {
                             // Delete the file
-                            System.IO.File.Delete(oldFilePath);
+                            File.Delete(oldFilePath);
                             //  return Ok(new { message = "File deleted successfully." });
                         }
                         else
@@ -409,9 +409,9 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                     }
 
                     checkUserExist.ApplicationNo = request.ApplicationNo;
-                 
+
                     checkUserExist.PermanentAddress = request.PermanentAddress;
-                   
+
                     checkUserExist.BusinessStartingDate = request.BusinessStartingDate;
                     checkUserExist.DistrictId = request.DistrictId;
                     checkUserExist.DivisionId = request.DivisionId;
@@ -427,16 +427,16 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                     checkUserExist.MemberTINNo = request.MemberTINNo;
                     checkUserExist.MemberNID = request.MemberNID;
                     checkUserExist.Name = request.Name;
-                 
+
                     checkUserExist.MemberTradeLicense = request.MemberTradeLicense;
                     checkUserExist.NomineeName = request.NomineeName;
                     checkUserExist.PhoneNo = request.PhoneNo;
-                    checkUserExist.IsApproved=request.IsApproved;
+                    checkUserExist.IsApproved = request.IsApproved;
                     checkUserExist.SubscriptionFee = request.SubscriptionFee;
-                   
 
 
-                    if(checkUserExist.SubscriptionStarts ==null && checkUserExist.PaidTill ==null && request.SubscriptionStarts != null)
+
+                    if (checkUserExist.SubscriptionStarts == null && checkUserExist.PaidTill == null && request.SubscriptionStarts != null)
                     {
                         //checkUserExist.SubscriptionStarts = request.SubscriptionStarts;
                         //// Subtract one month to go to the previous month
@@ -450,9 +450,9 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                     }
 
-                   
-               
-                    
+
+
+
 
                     _context.MemberRegistrationInfos.Update(checkUserExist);
 
@@ -469,8 +469,8 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                         foreach (var item in request.ContactDetailReq)
                         {
-                            var exist= await _context.MultipleOwners.FirstOrDefaultAsync(x=>x.Id == item.Id && x.MemberId==checkUserExist.Id,cancellationToken);
-                            if(exist != null)
+                            var exist = await _context.MultipleOwners.FirstOrDefaultAsync(x => x.Id == item.Id && x.MemberId == checkUserExist.Id, cancellationToken);
+                            if (exist != null)
                             {
                                 exist.Name = item.Name;
                                 exist.Email = item.Email;
@@ -482,10 +482,10 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
                             {
                                 var contact = new MultipleOwner
                                 {
-                                    MemberId=checkUserExist.Id,
+                                    MemberId = checkUserExist.Id,
                                 };
 
-                                if(item.Name != "null" && item.Name !="undefined" )
+                                if (item.Name != "null" && item.Name != "undefined")
                                 {
                                     contact.Name = item.Name;
                                 }
@@ -500,7 +500,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                                 _context.MultipleOwners.Add(contact);
                             }
-                            
+
                         }
 
                         // 3. Remove items not in the incoming request
@@ -529,7 +529,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration.UpdateMemberInfo
 
                         //    await _mediator.Send(new RSubscriptionDueByMemberCommand() { MemberId = checkUserExist.Id });
                         //}
-                     
+
                         result.HasError = false;
                         result.Messages.Add("Member Registration Updated successfully!!");
 

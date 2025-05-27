@@ -1,10 +1,6 @@
-﻿using MemApp.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using Res.Domain.Entities;
+using System.Text.Json.Serialization;
 
 namespace ResApp.Application.Models.DTOs
 {
@@ -27,10 +23,7 @@ namespace ResApp.Application.Models.DTOs
         public decimal? MembershipFee { get; set; }
 
         public string? Name { get; set; }
-        //public string? FatherName { get; set; }
-        //public string? MotherName { get; set; }
-        //public string? SpouseName { get; set; }
-        //public string? HusbandName { get; set; }
+      
         public string? NomineeName { get; set; }
         public string? InstituteNameBengali { get; set; }
         public string? InstituteNameEnglish { get; set; }
@@ -84,6 +77,14 @@ namespace ResApp.Application.Models.DTOs
         public IFormFile? NIDImgFile { get; set; }
         public IFormFile? TradeLicenseImgFile { get; set; }
         public IFormFile? TinImgFile { get; set; }
+
+        public IFormFile? ProfileImg { get; set; }
+
+        public string? EmailId { get; set; }
+
+
+        [JsonIgnore]
+        public string? WebRootPath { get; set; }
     }
 
     public class MemberSearchParam : PaginationParams

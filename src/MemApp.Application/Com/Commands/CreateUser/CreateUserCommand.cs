@@ -1,41 +1,27 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using MemApp.Application.Com.Models;
 using MemApp.Application.Extensions;
 using MemApp.Application.Interfaces;
 using MemApp.Application.Interfaces.Contexts;
-using MemApp.Domain.Entities;
-using MemApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Res.Domain.Entities;
 using ResApp.Application.Interfaces;
-using System.Globalization;
 
-namespace MemApp.Application.Com.Commands.CreateUser
+namespace ResApp.Application.Com.Commands.CreateUser
 {
     public class CreateUserCommand : IRequest<Result<UserDto>>
     {
-        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
         public string EmailId { get; set; } = string.Empty;
-      //  public bool EmailConfirmed { get; set; }
-       // public string PasswordHash { get; set; } = string.Empty;
-      //  public string PasswordSalt { get; set; } = string.Empty;
-       // public string OldPassword { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-     //   public string ConfirmPassword { get; set; } = string.Empty;
-
-     //   public int LoginFailedAttemptCount { get; set; }
-      //  public DateTime? LastLoginFailedAttemptDate { get; set; }
-    //    public DateTime? LastLoginDate { get; set; }
-     //   public UserStatus Status { get; set; }
         public string PhoneNo { get; set; } = string.Empty;
-     //   public bool IsActive { get; set; }
         public string AppId { get; set; } = string.Empty;
-
         public string? CompanyName { get; set; }
         public string? TradeLicense { get; set; }
         public string? UserNID { get; set; }
+       // public UserReq Model { get; set; } = new UserReq();
     }
 
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<UserDto>>
@@ -45,24 +31,43 @@ namespace MemApp.Application.Com.Commands.CreateUser
         private readonly IPasswordHash _passwordHash;
         private readonly IPasswordNewHash _passwordNewHash;
         private readonly IPermissionHandler _permissionHandler;
-        public CreateUserCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash, 
-                                        IPasswordNewHash passwordNewHash, IPermissionHandler permissionHandler)
+        private readonly IValidator<CreateUserCommand> _validator;
+        public CreateUserCommandHandler(IMemDbContext context, IMediator mediator, IPasswordHash passwordHash,
+                                        IPasswordNewHash passwordNewHash, IPermissionHandler permissionHandler,
+                                        IValidator<CreateUserCommand> validator)
         {
             _context = context;
             _mediator = mediator;
             _passwordHash = passwordHash;
             _passwordNewHash = passwordNewHash;
             _permissionHandler = permissionHandler;
+            _validator = validator;
         }
         public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellation)
         {
             var result = new Result<UserDto>();
 
-            var checkUserNameExist= await _context.MemberRegistrationInfos
-                .AnyAsync(q => q.UserName == request.UserName );
+            try
+            { 
+            var validResult = await _validator.ValidateAsync(request, cancellation);
+            if (!validResult.IsValid)
+            {
+                result.HasError = true;
+                foreach (var error in validResult.Errors)
+                {
+                    result.Messages.Add(error.ErrorMessage);
+                }
+                return result;
+            }
 
-            var checkEmailExist = await _context.MemberRegistrationInfos
-               .AnyAsync(q => q.Email == request.EmailId);
+            var checkUserNameExist = await _context.MemberRegistrationInfos
+                .AsNoTracking()
+                .AnyAsync(q => q.Email == request.EmailId, cancellationToken: cancellation);
+
+            var checkEmailExist = await _context.Users
+                .AsNoTracking()
+                .AnyAsync(q => q.EmailId == request.EmailId, cancellationToken: cancellation);
+
 
             var checkUserNIDExist = await _context.MemberRegistrationInfos
               .AnyAsync(q => q.MemberNID == request.UserNID);
@@ -90,26 +95,26 @@ namespace MemApp.Application.Com.Commands.CreateUser
 
             //var obj = await _context.Users
             //    .SingleOrDefaultAsync(q => q.Id == request.Id);
-            if (!checkUserNameExist  && !checkEmailExist)
+            if (!checkUserNameExist && !checkEmailExist)
             {
 
                 var memberNew = new MemberRegistrationInfo
                 {
                     Name = request.Name,
-                    Email=request.EmailId,
+                    Email = request.EmailId,
                     UserName = request.UserName,
                     InstituteNameEnglish = request.CompanyName,
                     MemberTradeLicense = request.TradeLicense,
                     MemberNID = request.UserNID,
-                    IsActive=true,
-                    IsApproved=false,
-                    IsFilled=false,
-                    PhoneNo=request.PhoneNo,
-                  //  MemberShipNo=GenerateMembershipNo()
+                    IsActive = true,
+                    IsApproved = false,
+                    IsFilled = false,
+                    PhoneNo = request.PhoneNo,
+                    //  MemberShipNo=GenerateMembershipNo()
                 };
 
 
-               
+
 
                 string newPasswordHash = string.Empty;
                 string newPasswordSaltHash = string.Empty;
@@ -123,41 +128,32 @@ namespace MemApp.Application.Com.Commands.CreateUser
                 _passwordNewHash.CreateHash(request.Password, ref newPasswordHash,
                   ref newPasswordSaltHash);
 
-               // memberNew.Password = _passwordHash.GetEncryptedPassword(request.Password.ToString());
+                // memberNew.Password = _passwordHash.GetEncryptedPassword(request.Password.ToString());
                 memberNew.Password = _passwordNewHash.GetEncryptedPassword(request.Password.ToString());
                 memberNew.PasswordHash = newPasswordHash;
                 memberNew.PasswordSalt = newPasswordSaltHash;
 
                 _context.MemberRegistrationInfos.Add(memberNew);
 
-                if (await _context.SaveChangesAsync(cancellation) > 0)
-                {
-
-                    var user = new User();
-                    user.IsActive = true;
-
-                    user.IsActive = true;
-
-                    user.PasswordHash = newPasswordHash;
-                    user.PasswordSalt = newPasswordSaltHash;
-                    user.EmailConfirmed = true;
 
 
-                    user.Name = request.Name;
-                    user.PhoneNo = request.PhoneNo;
-                    user.UserName = request.UserName;
-                    user.EmailId = request.EmailId;
-                    user.AppId = request.AppId;
-                    user.MemberInfoId=memberNew.Id;
+                var user = new User();
+                user.IsActive = true;
 
-                  //  user.CompanyName = request.CompanyName;
-                 //   user.UserNID = request.UserNID;
-                 //   user.TradeLicense = request.TradeLicense;
-                    _context.Users.Add(user);
-                }
+                user.IsActive = true;
+
+                user.PasswordHash = newPasswordHash;
+                user.PasswordSalt = newPasswordSaltHash;
+                user.EmailConfirmed = true;
+                user.Name = request.Name;
+                user.PhoneNo = request.PhoneNo;
+                user.UserName = request.UserName;
+                user.EmailId = request.EmailId;
+                user.AppId = request.AppId;
+                user.Member = memberNew;
+                _context.Users.Add(user);
 
 
-                
                 if (await _context.SaveChangesAsync(cancellation) > 0)
                 {
 
@@ -183,6 +179,12 @@ namespace MemApp.Application.Com.Commands.CreateUser
                 result.HasError = true;
                 result.Messages.Add("Username or Email exist!!!");
             }
+            }
+            catch(Exception ex)
+            {
+                result.HasError = true;
+                result.Messages.Add("something wrong");
+            }
             //if (obj == null)
             //{
             //    //if(!await _permissionHandler.HasRolePermissionAsync(1001))
@@ -195,7 +197,7 @@ namespace MemApp.Application.Com.Commands.CreateUser
             //    obj.IsActive = true;
             //    _context.Users.Add(obj);
             //    result.HasError = false;
-               
+
             //    var  newPassword = new Random(DateTime.Now.Millisecond).Next(1000, 9999);
 
             //    string newPasswordHash = string.Empty;
@@ -206,7 +208,7 @@ namespace MemApp.Application.Com.Commands.CreateUser
             //    obj.PasswordHash = newPasswordHash;
             //    obj.PasswordSalt = newPasswordSaltHash;
             //    obj.EmailConfirmed = true;
-               
+
             //    result.Messages.Add("New User created Password is :  " + newPassword);
             //}
             //else
@@ -247,8 +249,8 @@ namespace MemApp.Application.Com.Commands.CreateUser
 
         public string GenerateMembershipNo()
         {
-           // string initials = new string(fullName.Split(' ').Select(w => w[0]).ToArray()).ToUpper();
-           
+            // string initials = new string(fullName.Split(' ').Select(w => w[0]).ToArray()).ToUpper();
+
             string datePart = DateTime.Now.Year.ToString();
             int count = _context.MemberRegistrationInfos.Count(m => m.MemberShipNo!.StartsWith(datePart)) + 1;
             int randomNum = new Random().Next(1000, 9999);

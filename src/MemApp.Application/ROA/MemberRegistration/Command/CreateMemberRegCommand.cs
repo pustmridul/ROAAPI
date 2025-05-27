@@ -15,19 +15,17 @@ using MemApp.Application.Mem.Members.Models;
 using MemApp.Application.Services;
 using Dapper;
 using MemApp.Application.Mem.Attendances.Model;
+using FluentValidation;
+using ResApp.Application.ROA.MemberRegistration.Validation;
 
 
-namespace ResApp.Application.Com.Commands.MemberRegistration
+namespace ResApp.Application.ROA.MemberRegistration.Command
 {
-    public class CreateMemberRegCommand : IRequest<Result<MemberRegistrationInfoDto>>
+    public class CreateMemberRegCommand : IRequest<Result<MemberRegistrationInfoDto>>, IMemberValidator
     {
-       public string? EmailId {  get; set; }
-    
-
+        public string? EmailId { get; set; }
         public string? ApplicationNo { get; set; }
-
         public string? Name { get; set; }
-       
         public string? NomineeName { get; set; }
         public string? InstituteNameBengali { get; set; }
         public string? InstituteNameEnglish { get; set; }
@@ -37,12 +35,8 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public string? MemberTINNo { get; set; }
         public string? MemberTradeLicense { get; set; }
         public DateTime? BusinessStartingDate { get; set; }
-        public decimal? SubscriptionFee { get; set; }
-       
-
-        public bool IsApproved { get; set; }
-     
-
+       // public decimal? SubscriptionFee { get; set; }
+      //  public bool IsApproved { get; set; }
         public int? DivisionId { get; set; }
         public int? DistrictId { get; set; }
         public int? ThanaId { get; set; }
@@ -67,22 +61,37 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
     public class CreateMemberRegCommandHandler : IRequestHandler<CreateMemberRegCommand, Result<MemberRegistrationInfoDto>>
     {
         private readonly IMemDbContext _context;
-        private readonly IMediator _mediator;       
+        private readonly IMediator _mediator;
         private readonly IPermissionHandler _permissionHandler;
         private readonly IDapperContext _dapperContext;
+        private readonly IValidator<CreateMemberRegCommand> _validator;
 
         //  private readonly IWebHostEnvironment _hostingEnv;
-        public CreateMemberRegCommandHandler(IMemDbContext context, IMediator mediator, IPermissionHandler permissionHandler, IDapperContext dapperContext)
+        public CreateMemberRegCommandHandler(IMemDbContext context, IMediator mediator, 
+                                             IPermissionHandler permissionHandler, IDapperContext dapperContext,
+                                             IValidator<CreateMemberRegCommand> validator)
         {
             _context = context;
-            _mediator = mediator;           
+            _mediator = mediator;
             _permissionHandler = permissionHandler;
             _dapperContext = dapperContext;
+            _validator = validator;
         }
 
         public async Task<Result<MemberRegistrationInfoDto>> Handle(CreateMemberRegCommand request, CancellationToken cancellationToken)
         {
             var result = new Result<MemberRegistrationInfoDto>();
+
+            var validResult = await _validator.ValidateAsync(request, cancellationToken);
+            if (!validResult.IsValid)
+            {
+                result.HasError = true;
+                foreach (var error in validResult.Errors)
+                {
+                    result.Messages.Add(error.ErrorMessage);
+                }
+                return result;
+            }
 
             var checkUserNIDExist = await _context.MemberRegistrationInfos
                .AnyAsync(q => q.MemberNID == request.MemberNID);
@@ -91,25 +100,25 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
             var checkUserExist = new User();
             if (!string.IsNullOrEmpty(request.EmailId))
             {
-               
-                
-                    checkUserExist = await _context.Users
-                  .FirstOrDefaultAsync(q => q.EmailId == request.EmailId); 
 
-                    if (checkUserExist == null)
-                    {
-                        result.HasError = true;
-                        result.Messages.Add("User does not exist!!!");
-                        return result;
-                    }
+
+                checkUserExist = await _context.Users
+              .FirstOrDefaultAsync(q => q.EmailId == request.EmailId);
+
+                if (checkUserExist == null)
+                {
+                    result.HasError = true;
+                    result.Messages.Add("User does not exist!!!");
+                    return result;
+                }
 
                 //   var checkMemberExist=await _context.MemberRegistrationInfos.FirstOrDefaultAsync(x=>x.)
-                
+
             }
 
-           
 
-            
+
+
 
             if (checkUserNIDExist)
             {
@@ -117,33 +126,33 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                 result.Messages.Add("NID exist!!!");
                 return result;
             }
-            if (request.NIDImgFile == null || request.SignatureImgFile == null || request.TinImgFile == null || request.TradeLicenseImgFile == null )
-            {
-                result.HasError = true;
-                result.Messages.Add("Please upload all required files!!!");
-                return result;
-            }
+            //if (request.NIDImgFile == null || request.SignatureImgFile == null || request.TinImgFile == null || request.TradeLicenseImgFile == null)
+            //{
+            //    result.HasError = true;
+            //    result.Messages.Add("Please upload all required files!!!");
+            //    return result;
+            //}
 
-            string[] allowedExtensions = { ".pdf", ".jpg", ".jpeg", ".png" };
+            //string[] allowedExtensions = { ".pdf", ".jpg", ".jpeg", ".png" };
 
-            var files = new Dictionary<string, string>
-            {
-                { "NID Image", request.NIDImgFile.FileName },
-                { "Signature Image", request.SignatureImgFile.FileName },
-                { "Trade License", request.TradeLicenseImgFile.FileName },
-                { "TIN Document", request.TinImgFile.FileName }
-            };
+            //var files = new Dictionary<string, string>
+            //{
+            //    { "NID Image", request.NIDImgFile.FileName },
+            //    { "Signature Image", request.SignatureImgFile.FileName },
+            //    { "Trade License", request.TradeLicenseImgFile.FileName },
+            //    { "TIN Document", request.TinImgFile.FileName }
+            //};
 
-            var invalidFiles = files.Where(file => !allowedExtensions.Contains(Path.GetExtension(file.Value).ToLower()))
-                                    .Select(file => file.Key)
-                                    .ToList();
+            //var invalidFiles = files.Where(file => !allowedExtensions.Contains(Path.GetExtension(file.Value).ToLower()))
+            //                        .Select(file => file.Key)
+            //                        .ToList();
 
-            if (invalidFiles.Any())
-            {
-                result.HasError = true;
-                result.Messages.Add($"Invalid file type detected for: {string.Join(", ", invalidFiles)}. Only Image (.jpg, .jpeg, .png) or PDF (.pdf) files are allowed.");
-                return result;
-            }
+            //if (invalidFiles.Any())
+            //{
+            //    result.HasError = true;
+            //    result.Messages.Add($"Invalid file type detected for: {string.Join(", ", invalidFiles)}. Only Image (.jpg, .jpeg, .png) or PDF (.pdf) files are allowed.");
+            //    return result;
+            //}
             //string ext = Path.GetExtension(request.NIDImgFile.FileName);
             //string extSign = Path.GetExtension(request.SignatureImgFile.FileName);
             //string extTrade = Path.GetExtension(request.TradeLicenseImgFile.FileName);
@@ -306,42 +315,42 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                     // Create the entity and add it to the database
                     var entity = new MemberRegistrationInfo
                     {
-                     
-                      ApplicationNo = request.ApplicationNo,
-                    //  MemberShipNo=GenerateMembershipNo(),
-                      MemberShipNo= lastmembershipNo, // GenerateMembershipNoAsync(),// lastmembershipNo,
-                      IsApproved=false,// request.IsApproved,
-                      PermanentAddress=request.PermanentAddress,
-                     // Email=request.EmailId,
-                      CreatedOn=DateTime.UtcNow,
-                      BusinessStartingDate=request.BusinessStartingDate,
-                      DistrictId=request.DistrictId,
-                      DivisionId=request.DivisionId,
-                      ThanaId=request.ThanaId,
-                      ZoneId=request.ZoneId,
-                      MunicipalityId=request.MunicipalityId,
-                      UnionInfoId=request.UnionInfoId,
-                      WardId=request.WardId,
-                      InstituteNameBengali=request.InstituteNameBengali,
-                      InstituteNameEnglish=request.InstituteNameEnglish,
-                      MemberTINNo=request.MemberTINNo,
-                      MemberNID = request.MemberNID,
-                      Name =request.Name,
-                      SignatureUploadingTime=DateTime.UtcNow,
-                      MemberTradeLicense=request.MemberTradeLicense,
-                      NomineeName=request.NomineeName,
-                      PhoneNo=request.PhoneNo,
-                      Email=request.EmailId,
-                      NIDImgPath = uniqueFileNameNID,
-                      TinImgPath = uniqueFileNameTIN,
-                      TradeLicenseImgPath = uniqueFileNameTrade,
-                      SignatureImgPath=uniqueFileNameSign,
-                      ImgPath=uniqueFileNameProfile,
-                      SubscriptionFee=request.SubscriptionFee,
-                      IsActive=true,
-                      IsFilled = true,
-                      
-                    //  PaidTill=DateTime.Now
+
+                        ApplicationNo = request.ApplicationNo,
+                        //  MemberShipNo=GenerateMembershipNo(),
+                        MemberShipNo = lastmembershipNo, // GenerateMembershipNoAsync(),// lastmembershipNo,
+                        IsApproved = false,// request.IsApproved,
+                        PermanentAddress = request.PermanentAddress,
+                        // Email=request.EmailId,
+                        CreatedOn = DateTime.UtcNow,
+                        BusinessStartingDate = request.BusinessStartingDate,
+                        DistrictId = request.DistrictId,
+                        DivisionId = request.DivisionId,
+                        ThanaId = request.ThanaId,
+                        ZoneId = request.ZoneId,
+                        MunicipalityId = request.MunicipalityId,
+                        UnionInfoId = request.UnionInfoId,
+                        WardId = request.WardId,
+                        InstituteNameBengali = request.InstituteNameBengali,
+                        InstituteNameEnglish = request.InstituteNameEnglish,
+                        MemberTINNo = request.MemberTINNo,
+                        MemberNID = request.MemberNID,
+                        Name = request.Name,
+                        SignatureUploadingTime = DateTime.UtcNow,
+                        MemberTradeLicense = request.MemberTradeLicense,
+                        NomineeName = request.NomineeName,
+                        PhoneNo = request.PhoneNo,
+                        Email = request.EmailId,
+                        NIDImgPath = uniqueFileNameNID,
+                        TinImgPath = uniqueFileNameTIN,
+                        TradeLicenseImgPath = uniqueFileNameTrade,
+                        SignatureImgPath = uniqueFileNameSign,
+                        ImgPath = uniqueFileNameProfile,
+                     //   SubscriptionFee = request.SubscriptionFee,
+                        IsActive = true,
+                        IsFilled = true,
+
+                        //  PaidTill=DateTime.Now
                     };
 
                     //if(checkUserExist?.Id !=0)
@@ -351,7 +360,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
 
                     _context.MemberRegistrationInfos.Add(entity);
 
-                    if(request.ContactDetailReq?.Count >0)
+                    if (request.ContactDetailReq?.Count > 0)
                     {
                         foreach (var item in request.ContactDetailReq)
                         {
@@ -359,9 +368,9 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                             {
                                 Name = item.Name,
                                 Phone = item.Phone,
-                                Email=item.Phone,
+                                Email = item.Phone,
                                 //MemberId=entity.Id,
-                                Member=entity
+                                Member = entity
                             };
                             _context.MultipleOwners.Add(contact);
                         }
@@ -404,23 +413,23 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                 var data = await connection.QueryAsync<long>(query);
                 return data.First().ToString("D8"); // format like 00000001
             }
-                //var nextValue = await _context.Database
-                //                 .ExecuteSqlRawAsync("SELECT NEXT VALUE FOR dbo.MembershipNoSequence");
-                //var result = await _context.da
-                //            .sql<int>("SELECT NEXT VALUE FOR dbo.MembershipNoSequence AS Value")
-                //            .AsNoTracking()
-                //            .FirstAsync();
+            //var nextValue = await _context.Database
+            //                 .ExecuteSqlRawAsync("SELECT NEXT VALUE FOR dbo.MembershipNoSequence");
+            //var result = await _context.da
+            //            .sql<int>("SELECT NEXT VALUE FOR dbo.MembershipNoSequence AS Value")
+            //            .AsNoTracking()
+            //            .FirstAsync();
 
             //return result.Value.ToString("D8"); // format like 00000001
         }
         public string GenerateMembershipNo()
         {
-          //  string initials = new string(fullName.Split(' ').Select(w => w[0]).ToArray()).ToUpper();
+            //  string initials = new string(fullName.Split(' ').Select(w => w[0]).ToArray()).ToUpper();
 
             string datePart = DateTime.Now.Year.ToString();
-            int count = _context.MemberRegistrationInfos.Count(m => m.MemberShipNo!.StartsWith("MEM-"+datePart)) + 1;
+            int count = _context.MemberRegistrationInfos.Count(m => m.MemberShipNo!.StartsWith("MEM-" + datePart)) + 1;
             int randomNum = new Random().Next(1000, 9999);
-            string random = Guid.NewGuid().ToString("N").Substring(0,8);
+            string random = Guid.NewGuid().ToString("N").Substring(0, 8);
             return $"MEM-{datePart}-{count}-{random}"; // Example: "JS-240304-4567"
         }
     }

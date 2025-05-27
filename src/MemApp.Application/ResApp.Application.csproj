@@ -13,6 +13,7 @@
     <PackageReference Include="Dapper" Version="2.0.143" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
+    <PackageReference Include="FluentValidation" Version="11.0.0" />
     <PackageReference Include="Hangfire.Core" Version="1.8.12" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
@@ -31,7 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Com\Commands\ROASubscription\Queries\" />
     <Folder Include="Mem\Attendances\Command\" />
     <Folder Include="Mem\Dashboard\Command\" />
     <Folder Include="PaymentGateway\SslCommerz\Queries\" />

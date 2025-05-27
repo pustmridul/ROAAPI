@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using MemApp.Application.Com.Commands.ChangedPassword;
-using MemApp.Application.Com.Commands.CreateUser;
 using MemApp.Application.Com.Commands.ResetPassword;
 using MemApp.Application.Com.Commands.SaveUserPermission;
 using MemApp.Application.Com.Models;
@@ -15,10 +14,11 @@ using MemApp.Application.Interfaces;
 using MemApp.Application.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResApp.Application.Com.Commands.CreateUser;
 using ResApp.Application.Com.Queries.GetCurrentUserDetails;
 using ResApp.Application.Com.Queries.GetUserById;
 
-namespace MemApp.WebApi.Controllers
+namespace Res.WebApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
@@ -34,7 +34,7 @@ namespace MemApp.WebApi.Controllers
             _userService = userService;
             _iWebHostEnvironment = iWebHostEnvironment;
         }
-      //  [Authorize]
+        //  [Authorize]
         [HttpPost]
         public async Task<IActionResult> SaveUser(CreateUserCommand command)
         {
@@ -171,7 +171,7 @@ namespace MemApp.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCurrentUserDetails()
         {
-            return Ok( await Mediator.Send(new GetCurrentUserDetailsQuery()));
+            return Ok(await Mediator.Send(new GetCurrentUserDetailsQuery()));
         }
 
 

@@ -4,10 +4,9 @@ using MemApp.Application.Com.Commands.ChangedPassword;
 using MemApp.Application.Com.Commands.Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Res.WebApi.Controllers;
 using ResApp.Application.App.Commands;
 
-namespace MemApp.WebApi.Controllers
+namespace Res.WebApi.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -38,7 +37,7 @@ namespace MemApp.WebApi.Controllers
         {
             model.IpAddress = GenerateIPAddress();
             var result = await Mediator.Send(model);
-           
+
             return Ok(result);
         }
 

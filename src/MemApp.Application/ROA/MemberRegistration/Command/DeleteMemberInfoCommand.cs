@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace ResApp.Application.Com.Commands.MemberRegistration
+namespace ResApp.Application.ROA.MemberRegistration.Command
 {
     public class DeleteMemberInfoCommand : IRequest<Result>
     {

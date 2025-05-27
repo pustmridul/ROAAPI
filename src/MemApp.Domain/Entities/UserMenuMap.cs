@@ -1,4 +1,5 @@
 ﻿using MemApp.Domain.Core.Models;
+using Res.Domain.Entities;
 
 namespace MemApp.Domain.Entities
 {

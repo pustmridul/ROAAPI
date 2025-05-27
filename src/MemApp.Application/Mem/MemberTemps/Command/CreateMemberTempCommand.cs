@@ -12,6 +12,7 @@ using MemApp.Domain.Entities;
 using MemApp.Domain.Entities.mem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Res.Domain.Entities;
 using System.Globalization;
 using System.Net.NetworkInformation;
 

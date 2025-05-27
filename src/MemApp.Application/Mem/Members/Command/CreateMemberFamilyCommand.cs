@@ -8,6 +8,7 @@ using MemApp.Application.Services;
 using MemApp.Domain.Entities;
 using MemApp.Domain.Entities.mem;
 using Microsoft.EntityFrameworkCore;
+using Res.Domain.Entities;
 using ResApp.Application.Interfaces;
 using System.Globalization;
 

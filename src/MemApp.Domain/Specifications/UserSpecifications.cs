@@ -1,6 +1,6 @@
-using MemApp.Domain.Entities;
 using MemApp.Domain.Enums;
 using MemApp.Domain.Core.Specifications;
+using Res.Domain.Entities;
 
 namespace MemApp.Domain.Specifications
 {

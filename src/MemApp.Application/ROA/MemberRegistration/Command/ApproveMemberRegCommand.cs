@@ -8,24 +8,24 @@ using ResApp.Application.ROA.RoaSubcription;
 using ResApp.Application.ROA.RoaSubcription.Command;
 
 
-namespace ResApp.Application.Com.Commands.MemberRegistration
+namespace ResApp.Application.ROA.MemberRegistration.Command
 {
     public class ApproveMemberRegCommand : IRequest<Result<MemberRegistrationInfoDto>>
     {
-      // public string? UserName {  get; set; }
-       public int? MemberId { get; set; }
-       public int? MemberCategoryId { get; set; }
-       public decimal? MembershipFee { get; set; }
-       public decimal? SubscriptionFee { get; set; }
-       public string? Note { get; set; }
-       public DateTime? SubscriptionStarts { get; set; }
+        // public string? UserName {  get; set; }
+        public int? MemberId { get; set; }
+        public int? MemberCategoryId { get; set; }
+        public decimal? MembershipFee { get; set; }
+        public decimal? SubscriptionFee { get; set; }
+        public string? Note { get; set; }
+        public DateTime? SubscriptionStarts { get; set; }
         //  public bool IsApproved { get; set; }
     }
 
     public class ApproveMemberRegCommandHandler : IRequestHandler<ApproveMemberRegCommand, Result<MemberRegistrationInfoDto>>
     {
         private readonly IMemDbContext _context;
-        private readonly IMediator _mediator;       
+        private readonly IMediator _mediator;
         private readonly IPermissionHandler _permissionHandler;
         private readonly ICurrentUserService _currentUserService;
 
@@ -41,7 +41,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
         public async Task<Result<MemberRegistrationInfoDto>> Handle(ApproveMemberRegCommand request, CancellationToken cancellationToken)
         {
             var checkAdmin = _currentUserService.Current().UserName;
-            
+
             var result = new Result<MemberRegistrationInfoDto>();
             if (checkAdmin != "Super Admin")
             {
@@ -72,8 +72,8 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                 result.HasError = true;
                 result.Messages.Add("Subscription Starting Date can not be empty!!!");
                 return result;
-            }              
-            
+            }
+
 
             if (checkMemberExist != null)
             {
@@ -81,11 +81,11 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                 {
 
                     checkMemberExist.IsApproved = true; // request.IsApproved;
-                    checkMemberExist.Note=request.Note;
-                    checkMemberExist.MemberCategoryId=request.MemberCategoryId;
-                    checkMemberExist.MembershipFee=request.MembershipFee;
-                    checkMemberExist.SubscriptionFee=request.SubscriptionFee;
-                    checkMemberExist.ApprovedBy= _currentUserService.Current().Id;
+                    checkMemberExist.Note = request.Note;
+                    checkMemberExist.MemberCategoryId = request.MemberCategoryId;
+                    checkMemberExist.MembershipFee = request.MembershipFee;
+                    checkMemberExist.SubscriptionFee = request.SubscriptionFee;
+                    checkMemberExist.ApprovedBy = _currentUserService.Current().Id;
                     checkMemberExist.ApproveTime = DateTime.Now;
 
                     if (checkMemberExist.SubscriptionStarts == null && checkMemberExist.PaidTill == null && request.SubscriptionStarts != null)
@@ -118,7 +118,7 @@ namespace ResApp.Application.Com.Commands.MemberRegistration
                                 await _mediator.Send(new RSubscriptionDueByMemberCommand() { MemberId = checkMemberExist.Id });
                             }
                         }
-                            
+
 
                         result.HasError = false;
                         result.Messages.Add("Member Approve Status changed successfully!!");

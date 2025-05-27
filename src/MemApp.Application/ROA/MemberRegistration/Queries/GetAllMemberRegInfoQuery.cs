@@ -63,7 +63,7 @@ namespace ResApp.Application.ROA.MemberRegistration.Queries
                 if (!string.IsNullOrEmpty(request.Model.MemberShipNo))
                 {
                     string searchText = request.Model.MemberShipNo.ToLower();
-                    query = query.Where(x => x.MemberShipNo!.ToLower().Contains(searchText));
+                    query = query.Where(x => x.MemberShipNo.ToLower().Contains(searchText));
                 }
 
                 if (!string.IsNullOrEmpty(request.Model.Name))
